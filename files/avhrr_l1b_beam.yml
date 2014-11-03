@@ -1,0 +1,7 @@
+---
+- channels:
+  - reflectance_1
+  - reflectance_2
+- coordinates:
+  - latitude
+  - longitude
