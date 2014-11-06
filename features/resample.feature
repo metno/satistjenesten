@@ -11,6 +11,6 @@ Feature: As a user of the software
 		
 		Examples:
 			| netcdf_filepath | avhrr_l1b_yaml_config | area_name | output_file |
-			| test_data/frac.m2.d08213.nc | avhrr_l1b_beam.yml | istjenesten_main_100k | resampled_avhrrl1b.nc | 
+			| test_data/metop-b.nc | test_data/test_config.yml | istjenesten_main_100k | resampled_avhrrl1b.nc | 
 	 
 	
