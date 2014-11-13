@@ -25,7 +25,10 @@ def step_impl(context, area_name):
         context.area_name = area_name
 	context.scene.area_name = context.area_name
  	context.gridded_scene = context.scene.resample_to_area()
-        assert context.gridded_scene.gridded is True
+        area_def = pyresample.utils.load_area('areas.cfg', context.area_name)
+        expected_dimensions = area_def.shape
+        tested_dimensions = context.gridded_scene.bands.items()[0][1].data.shape
+        assert expected_dimensions == tested_dimensions
 
 @then(u'export it as a netcdf file {output_file}')
 def step_impl(context, output_file):
@@ -33,6 +36,11 @@ def step_impl(context, output_file):
         context.scene.output_filepath = context.output_file
 	context.scene.write_as_netcdf()
         # compare the exported results with the area definition
-        area_def = pyresample.utils.load_area('areas.cfg', context.area_name)
-        exported_band = nc.Dataset(context.output_file, 'r').variables.values()[0][:]
-        assert exported_band.shape == area_def.shape
+        os.path.exists(context.output_file)
+        os.remove(context.output_file)
+
+@then(u'resample it to the GAC format')
+def step_impl(context):
+        lac_scene = context.scene
+        lac_data = lac_scene.bands.items()[0][1].data
+        assert type(lac_data) is numpy.ndarray
