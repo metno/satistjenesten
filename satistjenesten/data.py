@@ -9,6 +9,16 @@ from pyresample import utils
 from satistjenesten.utils import get_area_filepath
 
 class GenericScene(object):
+    """ Generic Scene object
+    It is a parent class to the more customized satellite scenes
+
+    Attributes:
+      config_dict (dict): configuration dictionary that tells you how to read an input file
+      config_filepath (str): file path to configuration dictionary
+      scene_filepath (str): file path to input file
+
+    """
+
     def __init__(self):
 	    self.config_dict = None
 	    self.config_filepath = None
