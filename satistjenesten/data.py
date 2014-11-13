@@ -43,7 +43,7 @@ class SatScene(GenericScene):
 
     def get_coordinates(self):
 	    nc_dataset = get_netcdf_filehandle(self.input_filename)
-	    self.latitudes	= nc_dataset.variables[self.config_dict['latitudes_name']][:]
+	    self.latitudes = nc_dataset.variables[self.config_dict['latitudes_name']][:]
 	    self.longitudes = nc_dataset.variables[self.config_dict['longitudes_name']][:]
 
     def load_scene_from_disk(self):
@@ -61,11 +61,14 @@ class SatScene(GenericScene):
                                                            lats=self.latitudes)
             bands_number = len(self.bands)
 	    for i, band in enumerate(self.bands.values()):
-                print "Resampling band {0:d}/{1:d}".format(i, bands_number)
+                print "Resampling band {0:d}/{1:d}".format(i+1, bands_number)
 		swath_data = band.data.copy()
 		band.data = kd_tree.resample_nearest(self.swath_area_def,
 						     swath_data,
-						     self.area_def, 10000)
+						     self.area_def,
+                                                     self.area_def.pixel_size_x,
+                                                     reduce_data=True,
+                                                     nprocs=2)
 	    # XXX: thats ugly
 	    gridded_scene.gridded = True
 	    return gridded_scene
@@ -85,7 +88,8 @@ class SatScene(GenericScene):
         # create variables
         bands_number = len(self.bands.keys())
         for (band_name, band_object) in self.bands.items():
-            variable = output_dataset.createVariable(band_name, band_object.data.dtype, ('y', 'x'))
+            variable = output_dataset.createVariable(band_name,
+                                                     band_object.data.dtype, ('y', 'x'))
             variable[:] = band_object.data
 	output_dataset.close()
 
