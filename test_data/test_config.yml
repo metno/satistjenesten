@@ -6,6 +6,27 @@ bands:
   reflec_2:
     long_name: reflectivity
     unit: W*m^2
+  reflec_3a:
+    long_name: Reflectance factor for channel 3a
+    units: "%"
+  temp_3b:
+    long_name: Blackbody temperature for channel 3b
+    units: K
+  temp_4:
+    long_name: Blackbody temperature for channel 4
+    units: K
+  temp_5:
+    long_name: Blackbody temperature for channel 5
+    units: K
+  sun_zenith:
+    long_name: Sun zenith angle
+    units: degree
+  view_zenith:
+    long_name: View zenith angle
+    units: degree
+  delta_azimuth:
+    long_name: Delta azimuth angle
+    units: degree
 
 longitudes_name: longitude
 latitudes_name:  latitude
