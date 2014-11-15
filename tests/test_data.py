@@ -6,7 +6,6 @@ import numpy
 import netCDF4
 
 from satistjenesten import data
-from satistjenesten import resample
 
 config_string = """
 bands:
