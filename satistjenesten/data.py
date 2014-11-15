@@ -148,3 +148,20 @@ def copy_attributes(object_from, object_to, attributes_list):
 def get_area_def_from_file(area_name):
     area_filepath = get_area_filepath()
     return utils.load_area(area_filepath, area_name)
+
+
+# GAC resampling
+def blocks(large_array, window_size):
+    small_array = large_array.reshape( (large_array.shape[0]/window_size, window_size ))
+    return small_array
+
+def rescale_lac_to_gac(lac_array):
+    """ Process only every forth line.
+    Use 5 elements window where the fifth element of the block is thrown away to 
+    form a gap between the measurements
+    
+    """
+    gac_array_flat = np.mean(blocks(lac_array[::4,:-1].flatten(), 5)[:,:-1], 1)
+    gac_length, = gac_array_flat.shape
+    gac_array_2d = gac_array_flat.reshape(gac_length/400, 400)
+    return gac_array_2d
