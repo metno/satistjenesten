@@ -27,6 +27,12 @@ bands:
   delta_azimuth:
     long_name: Delta azimuth angle
     units: degree
+  longitude:
+    long_name: Longitudes
+    units: degree
+  latitude:
+    long_name: Latitudes
+    units: degree
 
 longitudes_name: longitude
 latitudes_name:  latitude

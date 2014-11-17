@@ -71,7 +71,7 @@ class SatScene(GenericScene):
         self.swath_area_def = geometry.SwathDefinition(lons=self.longitudes, lats=self.latitudes)
         valid_input_index, valid_output_index, index_array, distance_array = \
                 kd_tree.get_neighbour_info(self.swath_area_def, self.area_def,
-                                            self.area_def.pixel_size_x, neighbours = 1)
+                                            self.area_def.pixel_size_x*2.5, neighbours = 1)
         bands_number = len(self.bands)
 
         for i, band in enumerate(self.bands.values()):
@@ -82,13 +82,6 @@ class SatScene(GenericScene):
                                                                 valid_input_index,
                                                                 valid_output_index,
                                                                 index_array)
-            # band.data = kd_tree.resample_nearest(self.swath_area_def,
-            #				     swath_data,
-            #				     self.area_def,
-            #                     self.area_def.pixel_size_x,
-            #                     reduce_data=True,
-            #                     nprocs=2)
-            # XXX: thats ugly
         gridded_scene.gridded = True
         return gridded_scene
 
@@ -106,10 +99,10 @@ class SatScene(GenericScene):
         gac_longitudes = rescale_lac_array_to_gac(lac_longitudes)
         gac_latitudes  = rescale_lac_array_to_gac(lac_latitudes)
 
-        self.bands['longitudes'] = SatBand()
-        self.bands['latitudes']  = SatBand()
-        self.bands['longitudes'].data = gac_longitudes
-        self.bands['latitudes'].data  = gac_latitudes
+        self.bands['longitude'] = SatBand()
+        self.bands['latitude']  = SatBand()
+        self.bands['longitude'].data = gac_longitudes
+        self.bands['latitude'].data  = gac_latitudes
 
     def get_area_def(self):
         self.area_def = get_area_def_from_file(self.area_name)
@@ -203,7 +196,7 @@ def rescale_lac_array_to_gac(lac_array):
     """
     window_size = 5
     lac_array_with_omitted_lines = lac_array[::4]
-    lac_array_2000px = lac_array[:,:-1]
+    lac_array_2000px = lac_array_with_omitted_lines[:,:-1]
     flat_lac_array = lac_array_2000px.flatten()
     gac_array_flat = np.mean(window_blocks(flat_lac_array, window_size)[:,:-1], axis=1)
     gac_length = gac_array_flat.shape[0]

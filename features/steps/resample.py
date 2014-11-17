@@ -37,7 +37,7 @@ def step_impl(context, output_file):
 	context.scene.write_as_netcdf()
         # compare the exported results with the area definition
         os.path.exists(context.output_file)
-        os.remove(context.output_file)
+        # os.remove(context.output_file)
 
 @then(u'resample it to the GAC format')
 def step_impl(context):
