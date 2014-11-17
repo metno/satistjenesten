@@ -41,6 +41,10 @@ def step_impl(context, output_file):
 
 @then(u'resample it to the GAC format')
 def step_impl(context):
-        lac_scene = context.scene
-        lac_data = lac_scene.bands.items()[0][1].data
-        assert type(lac_data) is numpy.ndarray
+        scene = context.scene
+        scene.resample_to_gac()
+        gac_data = scene.bands.values()[0].data
+        # import ipdb; ipdb.set_trace()
+        assert isinstance(gac_data, numpy.ndarray)
+        gac_data_scan_width = 400 # pixels
+        assert gac_data.shape[1] == gac_data_scan_width
