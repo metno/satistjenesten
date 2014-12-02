@@ -48,3 +48,25 @@ def step_impl(context):
         assert isinstance(gac_data, numpy.ndarray)
         gac_data_scan_width = 400 # pixels
         assert gac_data.shape[1] == gac_data_scan_width
+
+@given(u'using {config_filepath}')
+def step_impl(context, config_filepath):
+    import ipdb; ipdb.set_trace()
+    context.config_filepath = config_filepath
+    assert os.path.exists(context.config_filepath)
+
+@when(u'processing test_data/metop-b.nc')
+def step_impl(context):
+    assert False
+
+@when(u'using dummy_sic')
+def step_impl(context):
+    assert False
+
+@then(u'get file with sic')
+def step_impl(context):
+    assert False
+
+@then(u'with mean sic value 1')
+def step_impl(context):
+    assert False
