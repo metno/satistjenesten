@@ -1,8 +1,13 @@
+PYTHONPATH=.
+
 unittest:
 	nosetests
 
 behave:
 	behave
+
+wip:
+	behave --tags=wip
 
 cover:
 	nosetests --with-coverage --cover-package=satistjenesten --cover-html

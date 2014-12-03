@@ -4,6 +4,7 @@ import numpy
 import pyresample
 
 from satistjenesten import data
+from satistjenesten import retrievals
 
 @given(u'we process file {netcdf_filepath}')
 def step_impl(context, netcdf_filepath):
@@ -37,33 +38,42 @@ def step_impl(context, output_file):
 	context.scene.write_as_netcdf()
         # compare the exported results with the area definition
         os.path.exists(context.output_file)
-        # os.remove(context.output_file)
+        os.remove(context.output_file)
 
 @then(u'resample it to the GAC format')
 def step_impl(context):
         scene = context.scene
         scene.resample_to_gac()
         gac_data = scene.bands.values()[0].data
-        # import ipdb; ipdb.set_trace()
         assert isinstance(gac_data, numpy.ndarray)
         gac_data_scan_width = 400 # pixels
         assert gac_data.shape[1] == gac_data_scan_width
 
-@given(u'using {config_filepath}')
-def step_impl(context, config_filepath):
-    import ipdb; ipdb.set_trace()
-    context.config_filepath = config_filepath
+@given(u'using AVHRR L1B Beam config')
+def step_impl(context):
+    context.config_filepath = 'files/avhrr_beam.yml'
     assert os.path.exists(context.config_filepath)
 
-@when(u'processing test_data/metop-b.nc')
-def step_impl(context):
-    assert False
+@when(u'processing {input_file} file')
+def step_impl(context, input_file):
+    context.input_file = input_file
+    assert os.path.exists(context.input_file)
+    # load file contents
+    swath_scene = data.SatScene()
+    swath_scene.config_filepath = context.config_filepath
+    swath_scene.input_filename = context.input_file
+    swath_scene.load_scene_from_disk()
+    assert swath_scene.bands is not None
+    context.swath_scene = swath_scene
 
-@when(u'using dummy_sic')
-def step_impl(context):
-    assert False
 
-@then(u'get file with sic')
+@when(u'computing sic using {sic_algorithm} algorithm')
+def step_impl(context, sic_algorithm):
+    scene = context.swath_scene
+    retrievals.compute_parameter(scene, alg=sic_algorithm)
+    assert numpy.mean(scene.bands['sic'].data) == 1
+
+@then(u'get file with sic data')
 def step_impl(context):
     assert False
 
