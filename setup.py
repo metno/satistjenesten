@@ -1,5 +1,6 @@
 from setuptools import setup
 
+requirements = ['sphinxcontrib-napoleon']
 setup(name='satistjenesten',
         packages=['satistjenesten', 'satistjenesten/tests'],
         package_dir={'satistjenesten': 'satistjenesten'},
