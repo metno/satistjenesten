@@ -1,11 +1,10 @@
 from setuptools import setup
 
-requirements = ['sphinxcontrib-napoleon']
+requirements = ['sphinxcontrib-napoleon', 'mock']
 requires = ['numpy', 'pyresample', 'netCDF4']
 test_requires=["mock"]
 setup(name='satistjenesten',
-        packages=['satistjenesten', 'satistjenesten.data', 'satistjenesten.retrievals',
-                  'satistjenesten.utils'],
+        packages=['satistjenesten', 'satistjenesten'],
         package_dir={'satistjenesten': 'satistjenesten'},
         author='Mikhail Itkin',
         install_requires=requirements,
