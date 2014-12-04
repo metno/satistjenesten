@@ -12,6 +12,14 @@ satistjenesten.data module
     :undoc-members:
     :show-inheritance:
 
+satistjenesten.retrievals module
+--------------------------------
+
+.. automodule:: satistjenesten.retrievals
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 satistjenesten.utils module
 ---------------------------
 

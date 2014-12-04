@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Algorithms implementation to retrieve geophysical parameters
+"""
 
 from satistjenesten import data
 import numpy
