@@ -2,6 +2,7 @@ from setuptools import setup
 
 requirements = ['sphinxcontrib-napoleon']
 requires = ['numpy', 'pyresample', 'netCDF4']
+test_requires=["mock"]
 setup(name='satistjenesten',
         packages=['satistjenesten', 'satistjenesten.data', 'satistjenesten.retrievals',
                   'satistjenesten.utils'],
