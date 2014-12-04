@@ -1,4 +1,3 @@
-@wip
 Feature: compute sea ice concentration
     As a developer of MAD
     When processing AVHRR L1B files
@@ -10,9 +9,9 @@ Feature: compute sea ice concentration
     Scenario Outline: Dummy SIC
         When processing <input_file> file
         And computing sic using <sic_algorithm> algorithm
-        Then get file with sic data
-        And with mean sic value <value>
+        Then resample scene to the area <area_name>
+        Then save netcdf file <output_file>
 
         Examples: LAC data
-            | input_file | sic_algorithm | value |
-            | test_data/metop-b.nc | dummy_sic | 1 |
+            | input_file | sic_algorithm |  output_file | area_name |
+            | test_data/metop-b.nc | dummy_sic | dummy_sic.nc | nsidc_stere_north_300k |
