@@ -94,3 +94,15 @@ class TestExportNetcdf(unittest.TestCase):
         def tearDown(self):
             # os.remove(self.output_filepath)
             pass
+
+class TestRescale(unittest.TestCase):
+    def setUp(self):
+        self.array = numpy.ones((10, 10))
+
+    def test_window_blocks_Returns_Smaller_Array(self):
+        large_array = self.array
+        flat_large_array = large_array.flatten()
+        window_size = 4
+        expected_number_of_blocks = flat_large_array.shape[0] / window_size
+        small_array = data.window_blocks(flat_large_array, 4)
+        self.assertSequenceEqual((expected_number_of_blocks, window_size), small_array.shape)
