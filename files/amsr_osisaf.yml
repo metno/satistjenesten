@@ -1,0 +1,12 @@
+---
+bands:
+  ct_n90_OSISAF_corrNASA_wWF:
+    long_name: NasaTeamAlgSIC
+    units: "%"
+  lon_h:
+    units: degree
+  lat_h:
+    units: degree
+
+longitudes_name: lon_h
+latitudes_name:  lat_h
