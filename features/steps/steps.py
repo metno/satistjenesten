@@ -21,7 +21,7 @@ def step_impl(context, avhrr_l1b_yaml_config):
     numpy.testing.assert_array_almost_equal(scene.bands['reflec_1'].data,expected_variable)
     context.scene = scene
 
-@then(u'resample it to the istjenesten generic area {area_name}')
+@then(u'resample it to the area {area_name}')
 def step_impl(context, area_name):
     context.area_name = area_name
     context.scene.area_name = context.area_name
@@ -31,7 +31,7 @@ def step_impl(context, area_name):
     tested_dimensions = context.gridded_scene.bands.items()[0][1].data.shape
     assert expected_dimensions == tested_dimensions
 
-@then(u'export it as a netcdf file {output_file}')
+@then(u'export it as a file {output_file}')
 def step_impl(context, output_file):
     context.output_file = output_file
     context.scene.output_filepath = context.output_file
