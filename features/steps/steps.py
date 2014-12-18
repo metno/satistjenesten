@@ -6,22 +6,20 @@ import pyresample
 from satistjenesten import data
 from satistjenesten import retrievals
 
-@given(u'we process file {netcdf_filepath}')
-def step_impl(context, netcdf_filepath):
-    context.netcdf_filepath = netcdf_filepath
+@given(u'we process file {input_filepath}')
+def step_impl(context, input_filepath):
+    context.input_filepath = input_filepath
 
-@then(u'load the file using yaml config {avhrr_l1b_yaml_config}')
-def step_impl(context, avhrr_l1b_yaml_config):
-    context.config_filepath = avhrr_l1b_yaml_config
+@then(u'load the file using yaml config {yaml_config}')
+def step_impl(context, yaml_config):
+    context.config_filepath = yaml_config
     scene = data.SatScene()
     scene.config_filepath = context.config_filepath
-    scene.input_filename = context.netcdf_filepath
+    scene.input_filename = context.input_filepath
     scene.load_scene_from_disk()
-    expected_variable = nc.Dataset(context.netcdf_filepath).variables['reflec_1'][:]
-    numpy.testing.assert_array_almost_equal(scene.bands['reflec_1'].data,expected_variable)
     context.scene = scene
 
-@then(u'resample it to the area {area_name}')
+@then(u'resample scene to the area {area_name}')
 def step_impl(context, area_name):
     context.area_name = area_name
     context.scene.area_name = context.area_name
@@ -65,6 +63,7 @@ def step_impl(context, input_file):
     swath_scene.load_scene_from_disk()
     assert swath_scene.bands is not None
     context.swath_scene = swath_scene
+    context.scene = swath_scene
 
 @when(u'computing sic using {sic_algorithm} algorithm')
 def step_impl(context, sic_algorithm):
@@ -72,21 +71,3 @@ def step_impl(context, sic_algorithm):
     retrievals.compute_parameter(scene, alg=sic_algorithm)
     # dummy sic algorithm sets SIC value to 1, so check if mean is 1
     assert numpy.mean(scene.bands['sic'].data) == 1
-
-@then(u'save netcdf file {output_file}')
-def step_impl(context, output_file):
-    if os.path.exists(output_file):
-        os.remove(output_file)
-    context.swath_scene.output_filepath = output_file
-    context.swath_scene.write_as_netcdf()
-    assert os.path.exists(output_file)
-
-@then(u'resample scene to the area {area_name}')
-def step_impl(context, area_name):
-    context.area_name = area_name
-    context.swath_scene.area_name = context.area_name
-    context.gridded_scene = context.swath_scene.resample_to_area()
-    area_def = pyresample.utils.load_area('areas.cfg', context.area_name)
-    expected_dimensions = area_def.shape
-    tested_dimensions = context.gridded_scene.bands.items()[0][1].data.shape
-    assert expected_dimensions == tested_dimensions

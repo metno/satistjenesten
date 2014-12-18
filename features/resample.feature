@@ -6,7 +6,7 @@ Feature: As a user of the software
 	Scenario Outline: Beam Avhrr Netcdf files
 		Given we process file <input_filepath>
 		Then load the file using yaml config <yaml_config>
-		Then resample it to the area <area_name>
+		Then resample scene to the area <area_name>
 		Then export it as a file <output_file>
 
 		Examples:

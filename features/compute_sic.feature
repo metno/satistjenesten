@@ -10,7 +10,7 @@ Feature: compute sea ice concentration
         When processing <input_file> file
         And computing sic using <sic_algorithm> algorithm
         Then resample scene to the area <area_name>
-        Then save netcdf file <output_file>
+        Then export it as a file <output_file>
 
         Examples: LAC data
             | input_file | sic_algorithm |  output_file | area_name |
