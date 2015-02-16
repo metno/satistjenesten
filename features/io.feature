@@ -10,4 +10,4 @@ Feature: As a user of the software
 		Examples:
 			| input_filepath | yaml_config | area_name | output_file |
 			| test_data/metop-b.nc | test_data/test_config.yml | nsidc_stere_north_300k | resampled_avhrrl1b.nc |
-			| test_data/avhrr-msf.mitiff | test_data/avhrr-mitiff.yml | nsidc_stere_north_300k | resampled_avhrrl1b.nc |
+			| test_data/avhrr-msv.mitiff | test_data/avhrr-mitiff.yml | nsidc_stere_north_300k | resampled_avhrrl1b.nc |

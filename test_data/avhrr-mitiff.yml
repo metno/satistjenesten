@@ -1,0 +1,7 @@
+---
+bands:
+  1:
+    long_name: AVHRR channel 1
+
+coordinates:
+  None
