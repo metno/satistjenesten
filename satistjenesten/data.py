@@ -9,6 +9,7 @@ from pyresample import utils
 from pyresample import grid
 
 from satistjenesten.utils import get_area_filepath
+from satistjenesten.utils import parse_extension
 from satistjenesten import io
 from satistjenesten.io import SatBand
 
@@ -40,7 +41,7 @@ class SatScene(GenericScene):
         self.config_path = None
 
     def load(self):
-        self.file_format = utils.parse_extension(self.filename)
+        self.file_format = parse_extension(self.file_path)
         self.load_scene(fmt=file_format)
 
     def load_scene(self, fmt=None):

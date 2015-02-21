@@ -4,6 +4,7 @@ import numpy
 
 from PIL import Image
 import netCDF4 as nc
+from satistjenesten import utils
 
 class SatBand(object):
     def __init__(self):
@@ -35,7 +36,7 @@ class NetCdf(GenericFormat):
 
     def get_bands(self):
         bands = collections.OrderedDict()
-        yaml_dict = load_yaml_config(self.yaml_dict)
+        yaml_dict = utils.load_yaml_config(self.yaml_dict)
         band_dict = yaml_dict['bands']
         for (band_name, band_value) in band_dict.items():
             sat_band = SatBand()
@@ -51,16 +52,26 @@ class Mitiff(GenericFormat):
     
     def get_bands(self):
         bands = collections.OrderedDict()
-        yaml_dict = load_yaml_config(self.yaml_dict)
+        yaml_dict = utils.load_yaml_config(self.yaml_dict)
         band_dict = yaml_dict['bands']
         for (band_name, band_value) in band_dict.items():
             sat_band = SatBand()
             band_id = int(band_name)
             self.filehandle.seek(band_id)
-            sat_band.data = numpy.array(self.image)
+            sat_band.data = numpy.array(self.filehandle)
             sat_band.long_name = band_value['long_name']
             bands[band_name] = sat_band
         self.bands = bands
+
+    def get_area_def(self):
+        tags_dict = parse_mitiff_tags()
+        self.area_def = area_def_from_tags()
+
+    def get_coordinates(self):
+        if self.area_def is None:
+            self.get_area_def()
+        self.latitudes = self.area_def.latitudes
+        self.longitudes = self.area_def.longitudes
 
 def load_mitiff(file_path, config_path):
     mitiff_scene = Mitiff(file_path, config_path)

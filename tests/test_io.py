@@ -7,9 +7,7 @@ class TestIoMitiff(unittest.TestCase):
     def setUp(self):
         mitiff_file_path = 'test_data/avhrr-msv.mitiff'
         mitiff_dict_path = 'test_data/avhrr-mitiff.yml'
-        mitiff = io.Mitiff()
-        mitiff.filename = mitiff_file_path
-        mitiff.yaml_dict = mitiff_dict_path
+        mitiff = io.Mitiff(mitiff_file_path, mitiff_dict_path)
         self.mitiff = mitiff
 
     def test_load_NumpyArray(self):
