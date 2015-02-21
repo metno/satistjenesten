@@ -1,4 +1,5 @@
 import os
+import yaml
 
 def get_project_root_path():
     try:
@@ -18,17 +19,22 @@ def parse_extension(filepath):
     to make other bits aware which format driver should be used
     """
     extension = os.path.splitext(filepath)[1][1:]
-    
+
     extensions_dict = {"netcdf": ['nc'],
                        "mitiff": ['mitiff'],
                        "geotiff": ['gtiff', 'tiff', 'tif']}
 
+    driver = None
+
     for key in extensions_dict:
         if extension in extensions_dict[key]:
-            return key
-        else:
-            raise Exception("Unknown file extension, cannot guess file format")
-    
+           driver = key 
+
+    if driver is not None:
+        return driver
+    else:
+        raise Exception("Unknown file extension, cannot guess file format")
+
 def load_yaml_config(filepath):
     with open(filepath, 'r') as fh:
         yaml_dict = yaml.load(fh)

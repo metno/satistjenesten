@@ -9,6 +9,7 @@ from pyresample import utils
 from pyresample import grid
 
 from satistjenesten.utils import get_area_filepath
+from satistjenesten.utils import parse_extension
 from satistjenesten import io
 from satistjenesten.io import SatBand
 
@@ -40,12 +41,14 @@ class SatScene(GenericScene):
         self.config_path = None
 
     def load(self):
-        self.file_format = utils.parse_extension(self.filename)
-        self.load_scene(fmt=file_format)
+        self.file_format = parse_extension(self.file_path)
+        self.load_scene(fmt=self.file_format)
 
     def load_scene(self, fmt=None):
         if fmt is 'mitiff':
             self.scene = io.load_mitiff(self.file_path, self.config_path)
+        elif fmt is 'netcdf':
+            self.scene = io.load_netcdf(self.file_path, self.config_path)
         else:
             raise Exception('{0} reader not implemented'.format(fmt))
         self.bands = self.scene.bands
@@ -55,11 +58,18 @@ class SatScene(GenericScene):
         attributes_list_to_pass = ['bands', 'area_def', 'area_name']
         self.get_area_def()
         copy_attributes(self, gridded_scene, attributes_list_to_pass)
-        self.swath_area_def = geometry.SwathDefinition(lons=self.longitudes, lats=self.latitudes)
+
+        try:
+            self.swath_area_def = geometry.SwathDefinition(lons=self.longitudes, lats=self.latitudes)
+        except:
+            self.scene.get_area_def()
+            self.swath_area_def = self.scene.area_def
+
         valid_input_index, valid_output_index, index_array, distance_array = \
                 kd_tree.get_neighbour_info(self.swath_area_def, self.area_def,
                                             self.area_def.pixel_size_x*2.5, neighbours = 1)
         bands_number = len(self.bands)
+        import ipdb; ipdb.set_trace() # BREAKPOINT
 
         for i, band in enumerate(self.bands.values()):
             print "Resampling band {0:d}/{1:d}".format(i+1, bands_number)
