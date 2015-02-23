@@ -20,9 +20,6 @@ class TestScene(unittest.TestCase):
             self.scene = data.SatScene()
             self.input_filename = 'test_data/metop-b.nc'
 
-
-
-
 class TestSceneResampling(unittest.TestCase):
     def setUp(self):
             self.scene = data.SatScene()

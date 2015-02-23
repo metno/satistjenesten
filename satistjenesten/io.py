@@ -70,6 +70,7 @@ class Mitiff(GenericFormat):
         tags_dict = parse_mitiff_tags()
         self.area_def = area_def_from_tags()
 
+<<<<<<< HEAD
     def get_mitiff_tags(self):
         self.filehandle.seek(0)
         self.tags = self.filehandle.tag.tagdata
