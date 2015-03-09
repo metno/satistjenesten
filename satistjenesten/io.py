@@ -64,6 +64,7 @@ class Mitiff(GenericFormat):
             sat_band.data = numpy.array(self.filehandle)
             sat_band.long_name = band_value['long_name']
             bands[band_name] = sat_band
+            self.filehandle.seek(0)
         self.bands = bands
 
     def get_area_def(self):
@@ -75,13 +76,21 @@ class Mitiff(GenericFormat):
         self.tags = self.filehandle.tag.tagdata
         self.parse_mitiff_tags()
 
+    def parse_tiff_string(self, regex_pattern):
+        tags_string = self.tags[270]
+        regex = re.compile(regex_pattern)
+        r = regex.search(tags_string)
+        return r.groups()[0]
+
+
     def parse_mitiff_tags(self):
-        tags_string = self.tags[270][1] # for some reason it's a tuple
         tags_dict = {}
 
-        tags_dict['satellite'] = re.search('\sSatellite:\s(\w+[-]?\d+)', tags_string).group(1)
+        satellite_pattern = "Satellite:\s(\w+([-]?\d+)?)"
+        tags_dict['satellite'] = self.parse_tiff_string(satellite_pattern)
 
-        timestamp_string = re.search('Time:\s(\d+:\d+\s\d+/\d+-\d+)', tags_string).group(1)
+        timestamp_pattern = 'Time:\s(\d+:\d+\s\d+/\d+-\d+)'
+        timestamp_string = self.parse_tiff_string(timestamp_pattern)
         datetime_timestamp = parse_mitiff_timestamp(timestamp_string)
         tags_dict['timestamp'] = datetime_timestamp
 
@@ -91,19 +100,31 @@ class Mitiff(GenericFormat):
                                   'lon_0': 0,
                                   'ellps': "WGS84"}
 
-        xsize = re.search('Xsize:\s(\d+)', tags_string).group(1)
-        ysize = re.search('Ysize:\s(\d+)', tags_string).group(1)
+        # import ipdb; ipdb.set_trace() # BREAKPOINT
 
-        xunit = re.search('Xunit:\s(\d+)', tags_string).group(1)
-        yunit = re.search('Yunit:\s(\d+)', tags_string).group(1)
-        x_px_size = re.search('Ax:\s(\d+\.\d+)', tags_string).group(1)
-        y_px_size = re.search('Ay:\s(\d+\.\d+)', tags_string).group(1)
+
+        xsize_pattern = 'Xsize:\s+(\d+)'
+        xsize = self.parse_tiff_string(xsize_pattern)
+        ysize_pattern = 'Ysize:\s+(\d+)'
+        ysize = self.parse_tiff_string(ysize_pattern)
+
+        xunit_pattern = 'Xunit:[\s+]?(\d+)'
+        xunit = self.parse_tiff_string(xunit_pattern)
+        yunit_pattern = 'Yunit:[\s+]?(\d+)'
+        yunit = self.parse_tiff_string(yunit_pattern)
+
+        x_px_size_pattern = 'Ax:\s(\d+\.\d+)'
+        y_px_size_pattern = 'Ay:\s(\d+\.\d+)'
+        x_px_size = self.parse_tiff_string(x_px_size_pattern)
+        y_px_size = self.parse_tiff_string(y_px_size_pattern)
 
         xunit = float(xunit)
         yunit = float(yunit)
 
-        x0 = re.search('Bx:\s([-]?\d+\.\d+)', tags_string).group(1)
-        y0 = re.search('By:\s([-]?\d+\.\d+)', tags_string).group(1)
+        x0_pattern = 'Bx:\s([-]?\d+\.\d+)'
+        y0_pattern = 'By:\s([-]?\d+\.\d+)'
+        x0 = self.parse_tiff_string(x0_pattern)
+        y0 = self.parse_tiff_string(y0_pattern)
 
         tags_dict['x0'] = float(x0) * xunit
         tags_dict['y0'] = float(y0) * xunit

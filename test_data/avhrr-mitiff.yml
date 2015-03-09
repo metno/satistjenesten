@@ -2,6 +2,14 @@
 bands:
   1:
     long_name: AVHRR channel 1
+  2:
+    long_name: AVHRR channel 2
+  3:
+    long_name: AVHRR channel 3
+  4:
+    long_name: AVHRR channel 4
+  5:
+    long_name: AVHRR channel 5
 
 coordinates:
   None
