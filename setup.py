@@ -5,12 +5,12 @@ requirements = ['numpy',
                 'netCDF4 == 1.1.1',
                 'pyresample',
                 'pyyaml',
-                'PIL']
+                'pillow']
 
 readme_contents = open('README.md', 'r').read()
 
 setup(
-      name='AVHRR-meltponds',
+      name='Satistjenesten',
       author='Mikhail Itkin',
       description='Istjenesten satellite processing suite',
       long_description=readme_contents,

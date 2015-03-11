@@ -1,13 +1,15 @@
 import unittest
 from satistjenesten import io
 import numpy
+import datetime
 
 class TestIoMitiff(unittest.TestCase):
 
     def setUp(self):
         mitiff_file_path = 'test_data/avhrr-msv.mitiff'
         mitiff_dict_path = 'test_data/avhrr-mitiff.yml'
-        mitiff = io.Mitiff(mitiff_file_path, mitiff_dict_path)
+        mitiff = io.MitiffScene(filepath=mitiff_file_path, configpath=mitiff_dict_path)
+        mitiff.load()
         self.mitiff = mitiff
 
     def test_load_NumpyArray(self):
@@ -34,8 +36,8 @@ class TestIoMitiff(unittest.TestCase):
         self.mitiff.get_area_def()
         self.assertIsNotNone(self.mitiff.area_def)
 
-    def test_construct_coordinate_arrays(self):
-        pass
 
     def test_get_timestamp(self):
-        pass
+        self.mitiff.get_mitiff_tags()
+        self.mitiff.get_timestamp()
+        self.assertIsInstance(self.mitiff.timestamp, datetime.datetime)

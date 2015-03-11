@@ -40,3 +40,43 @@ def load_yaml_config(filepath):
         yaml_dict = yaml.load(fh)
     return yaml_dict
 
+def window_blocks(large_array, window_size):
+    """
+    Split a large 1D array into smaller non-overlapping arrays
+
+    Args:
+      large_array (numpy.ndarray): 1d array to be split in smaller blocks
+      window_size (int): window size, array shape should be divisible by this number
+
+    Returns:
+     numpy.ndarray: Resulting array with multiple small blocks of size `window_size`
+
+    """
+    y_size = large_array.shape[0]/window_size
+    blocks_array = large_array.reshape(y_size, window_size)
+    return blocks_array
+
+def rescale_lac_array_to_gac(lac_array):
+    """
+    Create a GAC AVHRR array by averaging 4 consecutive LAC pixels
+    Take only every forth scan line, omit the rest
+
+    Args:
+      lac_array (numpy.ndtype): array with scan width of 2001 pixels
+
+    Returns:
+      gac_array (numpy.ndtype): array with scan width of 400 pixels
+
+    Note:
+      Original GAC data contains 401 pixels per scanline, for the sake
+      of simplicity we take only 400 pixels.
+
+    """
+    window_size = 5
+    lac_array_with_omitted_lines = lac_array[::4]
+    lac_array_2000px = lac_array_with_omitted_lines[:,:-1]
+    flat_lac_array = lac_array_2000px.flatten()
+    gac_array_flat = np.mean(window_blocks(flat_lac_array, window_size)[:,:-1], axis=1)
+    gac_length = gac_array_flat.shape[0]
+    gac_array_2d = gac_array_flat.reshape(gac_length/400, 400)
+    return gac_array_2d

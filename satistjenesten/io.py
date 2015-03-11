@@ -104,7 +104,7 @@ class GenericScene(object):
 
         for i, band in enumerate(self.bands.values()):
             raster_array = band.data
-            gtiff_dataset.GetRasterBand(i + 1).WriteArray(raster_array.astype('byte'))                    
+            gtiff_dataset.GetRasterBand(i + 1).WriteArray(raster_array.astype('byte'))
 
         gtiff_dataset = None
 
@@ -130,16 +130,13 @@ class MitiffScene(GenericScene):
 
     def get_bands(self):
         bands = collections.OrderedDict()
-        yaml_dict = utils.load_yaml_config(self.yaml_dict)
-        band_dict = yaml_dict['bands']
-        for (band_name, band_value) in band_dict.items():
+        bands_number = int(self.tags_dict['channels_number'])
+        for band in range(bands_number):
             sat_band = SatBand()
-            band_id = int(band_name)
+            band_id = band
             self.filehandle.seek(band_id)
             sat_band.data = numpy.array(self.filehandle)
-            sat_band.long_name = band_value['long_name']
-            bands[band_name] = sat_band
-            self.filehandle.seek(0)
+            bands[band_id] = sat_band
         self.bands = bands
 
     def get_area_def(self):
@@ -151,7 +148,7 @@ class MitiffScene(GenericScene):
         self.tags = self.filehandle.tag.tagdata
         self.parse_mitiff_tags()
 
-    def parse_tiff_string(self, regex_pattern):
+    def parse_tag_string(self, regex_pattern):
         tags_string = self.tags[270]
         regex = re.compile(regex_pattern)
         r = regex.search(tags_string)
@@ -161,10 +158,13 @@ class MitiffScene(GenericScene):
         tags_dict = {}
 
         satellite_pattern = "Satellite:\s(\w+([-]?\d+)?)"
-        tags_dict['satellite'] = self.parse_tiff_string(satellite_pattern)
+        tags_dict['satellite'] = self.parse_tag_string(satellite_pattern)
+
+        channels_number_pattern = "Channels:\s+(\d+)"
+        tags_dict['channels_number'] = self.parse_tag_string(channels_number_pattern)
 
         timestamp_pattern = 'Time:\s(\d+:\d+\s\d+/\d+-\d+)'
-        timestamp_string = self.parse_tiff_string(timestamp_pattern)
+        timestamp_string = self.parse_tag_string(timestamp_pattern)
         datetime_timestamp = parse_mitiff_timestamp(timestamp_string)
         tags_dict['timestamp'] = datetime_timestamp
 
@@ -175,27 +175,27 @@ class MitiffScene(GenericScene):
                                   'ellps': 'WGS84'}
 
         xsize_pattern = 'Xsize:\s+(\d+)'
-        xsize = self.parse_tiff_string(xsize_pattern)
+        xsize = self.parse_tag_string(xsize_pattern)
         ysize_pattern = 'Ysize:\s+(\d+)'
-        ysize = self.parse_tiff_string(ysize_pattern)
+        ysize = self.parse_tag_string(ysize_pattern)
 
         xunit_pattern = 'Xunit:[\s+]?(\d+)'
-        xunit = self.parse_tiff_string(xunit_pattern)
+        xunit = self.parse_tag_string(xunit_pattern)
         yunit_pattern = 'Yunit:[\s+]?(\d+)'
-        yunit = self.parse_tiff_string(yunit_pattern)
+        yunit = self.parse_tag_string(yunit_pattern)
 
         x_px_size_pattern = 'Ax:\s(\d+\.\d+)'
         y_px_size_pattern = 'Ay:\s(\d+\.\d+)'
-        x_px_size = self.parse_tiff_string(x_px_size_pattern)
-        y_px_size = self.parse_tiff_string(y_px_size_pattern)
+        x_px_size = self.parse_tag_string(x_px_size_pattern)
+        y_px_size = self.parse_tag_string(y_px_size_pattern)
 
         xunit = float(xunit)
         yunit = float(yunit)
 
         x0_pattern = 'Bx:\s([-]?\d+\.\d+)'
         y0_pattern = 'By:\s([-]?\d+\.\d+)'
-        x0 = self.parse_tiff_string(x0_pattern)
-        y0 = self.parse_tiff_string(y0_pattern)
+        x0 = self.parse_tag_string(x0_pattern)
+        y0 = self.parse_tag_string(y0_pattern)
 
         tags_dict['x0'] = float(x0) * xunit
         tags_dict['y0'] = float(y0) * xunit
@@ -242,14 +242,13 @@ class MitiffScene(GenericScene):
 
     def load(self):
         self.get_filehandle()
-        self.get_bands()
         self.get_mitiff_tags()
+        self.get_bands()
         self.get_area_def()
         self.get_timestamp()
-        # self.get_coordinates()
 
-def load_mitiff(file_path, config_path):
-    mitiff_scene = MitiffScene(file_path, config_path)
+def load_mitiff(file_path, **kwargs):
+    mitiff_scene = MitiffScene(filepath=file_path, **kwargs)
     mitiff_scene.load()
     return mitiff_scene
 
@@ -273,44 +272,3 @@ def copy_attributes(object_from, object_to, attributes_list):
 def get_area_def_from_file(area_name):
     area_filepath = get_area_filepath()
     return utils.load_area(area_filepath, area_name)
-
-def window_blocks(large_array, window_size):
-    """
-    Split a large 1D array into smaller non-overlapping arrays
-
-    Args:
-      large_array (numpy.ndarray): 1d array to be split in smaller blocks
-      window_size (int): window size, array shape should be divisible by this number
-
-    Returns:
-     numpy.ndarray: Resulting array with multiple small blocks of size `window_size`
-
-    """
-    y_size = large_array.shape[0]/window_size
-    blocks_array = large_array.reshape(y_size, window_size)
-    return blocks_array
-
-def rescale_lac_array_to_gac(lac_array):
-    """
-    Create a GAC AVHRR array by averaging 4 consecutive LAC pixels
-    Take only every forth scan line, omit the rest
-
-    Args:
-      lac_array (numpy.ndtype): array with scan width of 2001 pixels
-
-    Returns:
-      gac_array (numpy.ndtype): array with scan width of 400 pixels
-
-    Note:
-      Original GAC data contains 401 pixels per scanline, for the sake
-      of simplicity we take only 400 pixels.
-
-    """
-    window_size = 5
-    lac_array_with_omitted_lines = lac_array[::4]
-    lac_array_2000px = lac_array_with_omitted_lines[:,:-1]
-    flat_lac_array = lac_array_2000px.flatten()
-    gac_array_flat = np.mean(window_blocks(flat_lac_array, window_size)[:,:-1], axis=1)
-    gac_length = gac_array_flat.shape[0]
-    gac_array_2d = gac_array_flat.reshape(gac_length/400, 400)
-    return gac_array_2d

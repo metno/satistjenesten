@@ -1,4 +1,4 @@
 pykdtree
 behave
 nose
-pil
+pillow
