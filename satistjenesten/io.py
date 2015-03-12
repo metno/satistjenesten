@@ -81,8 +81,9 @@ class GenericScene(object):
         self.export_path = filepath
         gtiff_driver = gdal.GetDriverByName('GTiff')
         gtiff_format = gdal.GDT_Byte
-        gtiff_options = []
         bands_number = len(self.bands)
+        # gtiff_options=["COMPRESS=LZW", "PREDICTOR=2", "TILED=YES"]
+        gtiff_options = []
         gtiff_dataset = gtiff_driver.Create(self.export_path,
                                              int(self.area_def.x_size),
                                              int(self.area_def.y_size),
@@ -103,8 +104,9 @@ class GenericScene(object):
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
         for i, band in enumerate(self.bands.values()):
+            print "Writing band #{0:02d}".format(i+1)
             raster_array = band.data
-            gtiff_dataset.GetRasterBand(i + 1).WriteArray(raster_array.astype('byte'))
+            gtiff_dataset.GetRasterBand(i + 1).WriteArray(raster_array)
 
         gtiff_dataset = None
 
@@ -161,13 +163,29 @@ class MitiffScene(GenericScene):
         tags_dict['satellite'] = self.parse_tag_string(satellite_pattern)
 
         channels_number_pattern = "Channels:\s+(\d+)"
-        tags_dict['channels_number'] = self.parse_tag_string(channels_number_pattern)
+        channels_number = self.parse_tag_string(channels_number_pattern)
+
+        # XXX: Dirty fix -- there is a bug in NOAA avhrr Mitiff files
+        # where the channel number is 9 instead of 6
+        # If we encounter files with 9 channels let's assume it should be 6
+        if channels_number == 9:
+            channels_number = 6
+
+        tags_dict['channels_number'] = channels_number
 
         timestamp_pattern = 'Time:\s(\d+:\d+\s\d+/\d+-\d+)'
         timestamp_string = self.parse_tag_string(timestamp_pattern)
         datetime_timestamp = parse_mitiff_timestamp(timestamp_string)
         tags_dict['timestamp'] = datetime_timestamp
 
+        proj_string_pattern = 'Proj string:\s(.*)\n'
+        proj_string = self.parse_tag_string(proj_string_pattern)
+
+        tags_dict['proj_string'] = proj_string
+
+        # Seems proj string contains some confusing information
+        # define proj dict manually with the known parameters
+        # Mitiff projection is always the same
         tags_dict['proj_dict'] = {'proj': 'stere',
                                   'lat_0': '90',
                                   'lat_ts': '60',
@@ -272,3 +290,5 @@ def copy_attributes(object_from, object_to, attributes_list):
 def get_area_def_from_file(area_name):
     area_filepath = get_area_filepath()
     return utils.load_area(area_filepath, area_name)
+
+

@@ -80,3 +80,15 @@ def rescale_lac_array_to_gac(lac_array):
     gac_length = gac_array_flat.shape[0]
     gac_array_2d = gac_array_flat.reshape(gac_length/400, 400)
     return gac_array_2d
+
+def parse_proj_string(proj_string):
+    """
+    Parse proj4 string and create a dictionary out of it
+    """
+    regex_pattern = "(\+(\w+)=([A-Z\d+\w+\.]*))"
+    regex = re.compile(regex_pattern)
+    regex_results = regex.findall(proj_string)
+    proj_dict = {}
+    for proj_element in regex_results:
+        proj_dict[proj_element[1]] = proj_element[2]
+    return proj_dict
