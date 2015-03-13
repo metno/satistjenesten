@@ -1,0 +1,47 @@
+from satistjenesten.scene import GenericScene
+import numpy
+
+class MosaicScene(GenericScene):
+    """
+    Mosaic scene is an extension of GenericScene where
+    Several scenes are combined into one
+    """
+    def __init__(self):
+        self.start_timestamp = None
+        self.end_timestamp = None
+        self.timestamp = None
+        self.area_def = None
+        self.scenes = None
+        self.bands = None
+
+    def add_scenes(self, scenes_list):
+        self.scenes = scenes_list
+        background_scene = self.scenes[0]
+        if self.area_def is None:
+            self.area_def = background_scene.area_def
+        if self.timestamp is None:
+            self.start_timestamp = background_scene.timestamp
+            self.timestamp = self.start_timestamp
+        if self.area_def is not background_scene.area_def:
+            self.bands = background_scene.resample_to_area(self.area_def).bands
+        else:
+            self.bands = background_scene.bands
+
+    def compose_mosaic(self):
+        if self.scenes is None:
+            raise Warning("Can't compose mosaic before any scenes have been added")
+        for scene in self.scenes:
+            if scene.area_def != self.area_def:
+                import ipdb; ipdb.set_trace() # BREAKPOINT
+                scene = scene.resample_to_area(self.area_def)
+            self.add_bands_to_mosaic_bands(scene)
+
+    def add_bands_to_mosaic_bands(self, scene):
+        for band_name in self.bands.keys():
+            mosaic_band = self.bands[band_name].data
+            scene_band = scene.bands[band_name].data
+            # XXX: Using zeroes instead of fill_values. Not good!
+            # TODO: Handle missing data correctly
+            self.bands[band_name].data = numpy.where(scene_band == 0,
+                    mosaic_band,
+                    scene_band)
