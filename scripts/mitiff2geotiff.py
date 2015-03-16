@@ -12,7 +12,7 @@ def make_output_filepath(input_filepath, output_dir):
 
 
 def main():
-    p = argparse.ArgumentParser("loop_wrapper")
+    p = argparse.ArgumentParser()
     p.add_argument("-o", "--output-directory")
     p.add_argument("input_files", nargs='+',  help="Input Mitiff Files")
     args = p.parse_args()
@@ -22,7 +22,8 @@ def main():
         print "Converting file {} of {}".format(i+1, files_number)
         output_filepath = make_output_filepath(input_file, args.output_directory)
         mitiff = io.load_mitiff(input_file)
-        mitiff.save_geotiff(output_filepath)
+        mitiff.save_rgb_image(output_filepath+".tif", [2, 1, 0])
+        # mitiff.save_geotiff(output_filepath)
 
 if __name__ == "__main__":
     main()

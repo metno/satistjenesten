@@ -2,6 +2,8 @@ from pyresample import utils as ps_utils
 from copy import deepcopy, copy
 from pyresample import kd_tree
 from osgeo import gdal, osr
+from PIL import Image
+import numpy
 
 class SatBand(object):
     def __init__(self):
@@ -13,7 +15,7 @@ class SatBand(object):
         self.longitude = None
 
 class GenericScene(object):
-    def __init__(self, filepath=None, configpath=None):
+    def __init__(self, filepath=None, configpath=None, **kwargs):
         self.file_path = filepath
         self.yaml_dict = configpath
         self.bands = None
@@ -21,6 +23,7 @@ class GenericScene(object):
         self.latitudes = None
         self.area_def = None
         self.timestamp = None
+        self.kwargs = kwargs
 
     def get_filehandle(self):
         self.filehandle = open(self.file_path, 'r')
@@ -71,14 +74,27 @@ class GenericScene(object):
                                                                 index_array)
         return resampled_scene
 
-    def save_geotiff(self, filepath):
+    def save_geotiff(self, filepath, bands=None):
         """
         Export Scene in GeoTIFF format
         """
+
+        # If we have a list of bands and it's smaller than the
+        # original list, then exclude all of the bands we do not need
+        bands_names = self.bands.keys()
+        bands_dict = self.bands
+
+        if bands is not None:
+            for band_name in bands_names:
+                if band_name not in bands:
+                    bands_dict.pop(band_name)
+
+        bands = bands_dict.values()
+
         self.export_path = filepath
         gtiff_driver = gdal.GetDriverByName('GTiff')
         gtiff_format = gdal.GDT_Byte
-        bands_number = len(self.bands)
+        bands_number = len(bands_dict)
         gtiff_options=["COMPRESS=LZW", "PREDICTOR=2", "TILED=YES"]
         gtiff_options = ["COMPRESS=DEFLATE", "PREDICTOR=2", "ZLEVEL=6", "INTERLEAVE=BAND"]
         gtiff_dataset = gtiff_driver.Create(self.export_path,
@@ -100,13 +116,29 @@ class GenericScene(object):
         srs.ImportFromProj4(self.area_def.proj4_string)
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
-        for i, band in enumerate(self.bands.values()):
-            print "Writing band #{0:02d}".format(i+1)
+        for i, band in enumerate(bands):
             raster_array = band.data
             gtiff_dataset.GetRasterBand(i + 1).WriteArray(raster_array)
 
         gtiff_dataset = None
 
+
+    def save_rgb_image(self, output_filename,
+            rgb_list):
+        """
+        Save regular TIFF
+        """
+        red_band_name, green_band_name, blue_band_name = rgb_list
+        red_band_array = self.bands[red_band_name].data
+        green_band_array = self.bands[green_band_name].data
+        blue_band_array = self.bands[blue_band_name].data
+
+        rgb_array = numpy.dstack((red_band_array,
+                                 green_band_array,
+                                 blue_band_array)).astype(numpy.uint8)
+
+        img = Image.fromarray(rgb_array)
+        img.save(output_filename)
 
 
 def copy_attributes(object_from, object_to, attributes_list):
@@ -114,15 +146,3 @@ def copy_attributes(object_from, object_to, attributes_list):
         if hasattr(object_from, attribute_name):
             the_attribute = getattr(object_from, attribute_name)
             setattr(object_to, attribute_name, deepcopy(the_attribute))
-
-
-
-
-
-
-
-
-
-
-
-

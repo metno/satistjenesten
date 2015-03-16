@@ -6,13 +6,6 @@ class MosaicScene(GenericScene):
     Mosaic scene is an extension of GenericScene where
     Several scenes are combined into one
     """
-    def __init__(self):
-        self.start_timestamp = None
-        self.end_timestamp = None
-        self.timestamp = None
-        self.area_def = None
-        self.scenes = None
-        self.bands = None
 
     def add_scenes(self, scenes_list):
         self.scenes = scenes_list
@@ -33,10 +26,12 @@ class MosaicScene(GenericScene):
 
         # Start with second scene in the list, as the first one
         # has been added already as a background scene
-        for scene in self.scenes[1:]:
+        scene_list = self.scenes[1:]
+        for scene in scene_list:
             if scene.area_def != self.area_def:
                 scene = scene.resample_to_area(self.area_def)
             self.add_bands_to_mosaic_bands(scene)
+        # self.end_timestamp = scene_list[-1].timestamp 
 
     def add_bands_to_mosaic_bands(self, scene):
         for band_name in self.bands.keys():

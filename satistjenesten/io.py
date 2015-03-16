@@ -33,15 +33,25 @@ class MitiffScene(GenericScene):
         self.filehandle = Image.open(self.file_path)
 
     def get_bands(self):
-        bands = collections.OrderedDict()
+        bands_dict = collections.OrderedDict()
         bands_number = int(self.tags_dict['channels_number'])
-        for band in range(bands_number):
+
+        bands_list = None
+
+        try:
+            bands_list = self.kwargs['bands']
+        except:
+            bands_list = range(bands_number)
+
+        bands_number = len(bands_list)
+
+        for band in bands_list:
             sat_band = SatBand()
             band_id = band
             self.filehandle.seek(band_id)
             sat_band.data = numpy.array(self.filehandle)
-            bands[band_id] = sat_band
-        self.bands = bands
+            bands_dict[band_id] = sat_band
+        self.bands = bands_dict
 
     def get_area_def(self):
         tags_dict = parse_mitiff_tags()
