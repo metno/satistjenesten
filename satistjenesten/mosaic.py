@@ -30,16 +30,18 @@ class MosaicScene(GenericScene):
     def compose_mosaic(self):
         if self.scenes is None:
             raise Warning("Can't compose mosaic before any scenes have been added")
-        for scene in self.scenes:
+
+        # Start with second scene in the list, as the first one
+        # has been added already as a background scene
+        for scene in self.scenes[1:]:
             if scene.area_def != self.area_def:
-                import ipdb; ipdb.set_trace() # BREAKPOINT
                 scene = scene.resample_to_area(self.area_def)
             self.add_bands_to_mosaic_bands(scene)
 
     def add_bands_to_mosaic_bands(self, scene):
         for band_name in self.bands.keys():
-            mosaic_band = self.bands[band_name].data
-            scene_band = scene.bands[band_name].data
+            mosaic_band = self.bands[band_name].data.copy()
+            scene_band = scene.bands[band_name].data.copy()
             # XXX: Using zeroes instead of fill_values. Not good!
             # TODO: Handle missing data correctly
             self.bands[band_name].data = numpy.where(scene_band == 0,
