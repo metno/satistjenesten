@@ -28,12 +28,17 @@ class GenericScene(object):
     def get_filehandle(self):
         self.filehandle = open(self.file_path, 'r')
 
+    @property
+    def timestamp_string(self):
+        return self.timestamp.strftime('%Y%m%d_%H%M')
+
     def get_area_def(self, area_name=None):
         if area_name:
             self.area_name = area_name
             self.area_def = ps_utils.load_area('areas.cfg', self.area_name)
         else:
             pass
+
     def load(self):
         self.get_filehandle()
         self.get_bands()
@@ -61,7 +66,7 @@ class GenericScene(object):
 
         valid_input_index, valid_output_index, index_array, distance_array = \
                 kd_tree.get_neighbour_info(self.area_def, resampled_scene.area_def,
-                                            self.area_def.pixel_size_x*2.5, neighbours = 1)
+                                            self.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
 
         bands_number = len(resampled_scene.bands)
         for i, band in enumerate(resampled_scene.bands.values()):
