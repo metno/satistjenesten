@@ -7,9 +7,13 @@ class MosaicScene(GenericScene):
     Several scenes are combined into one
     """
 
+
     def add_scenes(self, scenes_list):
-        self.scenes = scenes_list
+
+        self.scenes = sort_scenes_by_timestamp(scenes_list)
+
         background_scene = self.scenes[0]
+
         if self.area_def is None:
             self.area_def = background_scene.area_def
         if self.timestamp is None:
@@ -31,7 +35,7 @@ class MosaicScene(GenericScene):
             if scene.area_def != self.area_def:
                 scene = scene.resample_to_area(self.area_def)
             self.add_bands_to_mosaic_bands(scene)
-        # self.end_timestamp = scene_list[-1].timestamp 
+        self.end_timestamp = self.scenes[-1].timestamp 
 
     def add_bands_to_mosaic_bands(self, scene):
         for band_name in self.bands.keys():
@@ -42,3 +46,11 @@ class MosaicScene(GenericScene):
             self.bands[band_name].data = numpy.where(scene_band == 0,
                     mosaic_band,
                     scene_band)
+
+def sort_scenes_by_timestamp(scenes_list):
+    """
+    Sort list of scenes using timestamp
+
+    """
+    sorted_list = sorted(scenes_list, key=lambda scene: scene.timestamp)
+    return sorted_list
