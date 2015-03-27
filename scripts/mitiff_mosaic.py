@@ -3,6 +3,7 @@ from satistjenesten import io
 from satistjenesten.mosaic import MosaicScene
 import argparse
 import os
+import numpy
 
 def main():
     p = argparse.ArgumentParser()
@@ -30,8 +31,16 @@ def main():
     mosaic.add_scenes(scene_list)
     mosaic.compose_mosaic()
 
-    output_filename = "{}_mosaic_{}.tiff".format(args.satellite_name, mosaic.timestamp_string)
+    # Add '1' to channel id's for readability
+    channels_string = "ch"+'-'.join(map(str, numpy.array(args.channels)+1))
+
+    output_filename = "{}_mosaic_{}-{}_{}.tiff".format(args.satellite_name,
+            mosaic.start_timestamp_string,
+            mosaic.end_timestamp_string,
+            channels_string)
+
     output_filepath = os.path.join(args.output_dir[0], output_filename)
+
 
     mosaic.save_geotiff(output_filepath, bands=args.channels)
 

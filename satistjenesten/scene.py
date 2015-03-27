@@ -1,4 +1,4 @@
-from pyresample import utils as ps_utils
+from satistjenesten.utils import load_area_def
 from copy import deepcopy, copy
 from pyresample import kd_tree
 from osgeo import gdal, osr
@@ -35,7 +35,7 @@ class GenericScene(object):
     def get_area_def(self, area_name=None):
         if area_name:
             self.area_name = area_name
-            self.area_def = ps_utils.load_area('areas.cfg', self.area_name)
+            self.area_def = load_area_def(self.area_name)
         else:
             pass
 
@@ -122,7 +122,10 @@ class GenericScene(object):
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
         for i, band in enumerate(bands):
-            raster_array = band.data
+            # normalize between 0 and 255
+            raster_array = band.data.copy()
+            raster_array *= (255.0 / raster_array.max()).astype(numpy.int8)
+            print raster_array.max(), raster_array.min()
             gtiff_dataset.GetRasterBand(i + 1).WriteArray(raster_array)
 
         gtiff_dataset = None

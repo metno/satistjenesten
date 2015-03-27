@@ -35,7 +35,9 @@ class MosaicScene(GenericScene):
             if scene.area_def != self.area_def:
                 scene = scene.resample_to_area(self.area_def)
             self.add_bands_to_mosaic_bands(scene)
-        self.end_timestamp = self.scenes[-1].timestamp 
+        self.end_timestamp = self.scenes[-1].timestamp
+        self.end_timestamp_string = self.end_timestamp.strftime('%Y%m%d%H%M')
+        self.start_timestamp_string = self.start_timestamp.strftime('%Y%m%d%H%M')
 
     def add_bands_to_mosaic_bands(self, scene):
         for band_name in self.bands.keys():

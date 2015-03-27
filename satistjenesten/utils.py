@@ -1,5 +1,6 @@
 import os
 import yaml
+import pyresample
 
 def get_project_root_path():
     try:
@@ -12,6 +13,11 @@ def get_area_filepath():
     project_path = get_project_root_path()
     area_filepath = os.path.join(project_path, 'areas.cfg')
     return area_filepath
+
+def load_area_def(area_name):
+    path_to_area_cfg = get_area_filepath()
+    area_def = pyresample.utils.load_area(path_to_area_cfg, area_name)
+    return area_def
 
 def parse_extension(filepath):
     """

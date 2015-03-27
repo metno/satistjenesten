@@ -1,19 +1,12 @@
 from satistjenesten import GenericScene
 
-class MosaicScene(GenericScene):
-    """
-    Mosaic scene is an extension of GenericScene where
-    Several scenes are combined into one
-    """
+class ImageScene(GenericScene):
     def __init__(self):
-        self.start_timestamp = None
-        self.end_timestamp = None
-        self.timestamp = None
-        self.area_def = None
+        self.bands = None
 
-    def add_scenes(self, scenes_list):
-        background_scene = self.scenes_list[0]
-        if self.area_def is None:
-            self.area_def = background_scene.area_def
-            self.start_timestamp = background_scene.timestamp
-        self.scenes = scenes_list
+    def create_rgb(self, red_band, green_band, blue_band):
+        red = red_band.data
+        gree = green_band.data
+        blue = blue_band.data
+        self.bands['rgb'] = numpy.dstack((red, green, blue))
+
