@@ -1,6 +1,6 @@
 from satistjenesten.utils import load_area_def
 from copy import deepcopy, copy
-from pyresample import kd_tree
+from pyresample import kd_tree, geometry
 from osgeo import gdal, osr
 from PIL import Image
 import numpy
@@ -24,6 +24,7 @@ class GenericScene(object):
         self.area_def = None
         self.timestamp = None
         self.kwargs = kwargs
+        self._swath_area_def = None
 
     def get_filehandle(self):
         self.filehandle = open(self.file_path, 'r')
@@ -39,11 +40,31 @@ class GenericScene(object):
         else:
             pass
 
+    @property
+    def swath_area_def(self):
+        return self._swath_area_def
+
+    def get_swath_area_def(self, lons_name, lats_name):
+        if self._swath_area_def is None:
+            try:
+                lons = self.filehandle.variables[lons_name][:]
+                lats = self.filehandle.variables[lats_name][:]
+            except:
+                raise Exception('File does not contain latitude/longitude information')
+        
+        swath_area_def = geometry.SwathDefinition(lons, lats) 
+        self._swath_area_def = swath_area_def
+        self.area_def = swath_area_def
+
     def load(self):
         self.get_filehandle()
         self.get_bands()
 
     def get_coordinates(self):
+        """
+        Retrieve lon/lat coordinates from the area definition object
+
+        """
         if self.area_def is None:
             self.get_area_def()
         self.longitudes, self.latitudes = self.area_def.get_lonlats()
@@ -66,7 +87,7 @@ class GenericScene(object):
 
         valid_input_index, valid_output_index, index_array, distance_array = \
                 kd_tree.get_neighbour_info(self.area_def, resampled_scene.area_def,
-                                            self.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
+                                            resampled_scene.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
 
         bands_number = len(resampled_scene.bands)
         for i, band in enumerate(resampled_scene.bands.values()):

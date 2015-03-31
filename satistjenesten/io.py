@@ -18,15 +18,19 @@ class NetcdfScene(GenericScene):
         self.filehandle = nc.Dataset(self.file_path, 'r')
 
     def get_bands(self):
-        bands = collections.OrderedDict()
-        yaml_dict = utils.load_yaml_config(self.yaml_dict)
-        band_dict = yaml_dict['bands']
-        for (band_name, band_value) in band_dict.items():
+        bands_dict = collections.OrderedDict()
+        bands_list = self.kwargs['bands']
+        nc_variables = self.filehandle.variables
+        for band_name in bands_list:
             sat_band = SatBand()
             sat_band.data = self.filehandle.variables[band_name][:]
-            sat_band.long_name = band_value['long_name']
-            bands[band_name] = sat_band
-        self.bands = bands
+            bands_dict[band_name] = sat_band
+        self.bands = bands_dict
+
+    def load(self):
+        self.get_filehandle()
+        self.get_bands()
+        self.get_swath_area_def('lon_h', 'lat_h')
 
 class MitiffScene(GenericScene):
     def get_filehandle(self):
@@ -175,8 +179,8 @@ def load_mitiff(file_path, **kwargs):
     mitiff_scene.load()
     return mitiff_scene
 
-def load_netcdf(file_path, config_path):
-    netcdf_scene = NetcdfScene(file_path, config_path)
+def load_netcdf(file_path, **kwargs):
+    netcdf_scene = NetcdfScene(file_path, **kwargs)
     netcdf_scene.load()
     return netcdf_scene
 

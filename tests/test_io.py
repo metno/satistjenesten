@@ -41,3 +41,13 @@ class TestIoMitiff(unittest.TestCase):
         self.mitiff.get_mitiff_tags()
         self.mitiff.get_timestamp()
         self.assertIsInstance(self.mitiff.timestamp, datetime.datetime)
+
+class TestIoNetcdf(unittest.TestCase):
+    def setUp(self):
+        netcdf_filepath = 'test_data/amsr2.nc'
+        netcdf_scene = io.NetcdfScene(filepath=netcdf_filepath, bands=['lat_h'])
+        self.netcdf = netcdf_scene
+        self.netcdf.load()
+    
+    def test_Load_DefinedBands(self):
+        self.assertIsNotNone(self.netcdf.bands)
