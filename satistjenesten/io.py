@@ -1,4 +1,3 @@
-import yaml
 import collections
 import numpy
 import re
@@ -30,6 +29,26 @@ class NetcdfScene(GenericScene):
     def load(self):
         self.get_filehandle()
         self.get_bands()
+        self.get_swath_area_def('lon_h', 'lat_h')
+
+class OsisafAmsr2NetcdfScene(NetcdfScene):
+    def get_timestamp(self):
+        """
+        Read timestamp values from the netcdf file
+        Use start timestamp as the file timestamp
+        """
+        start_timestamp_string = self.filehandle.start_date_and_time
+        self.start_timestamp = datetime.datetime.strptime(start_timestamp_string,
+                                                     "%Y-%m-%dT%H:%M:%SZ" )
+        end_timestamp_string = self.filehandle.end_date_and_time
+        self.end_timestamp = datetime.datetime.strptime(end_timestamp_string,
+                                                     "%Y-%m-%dT%H:%M:%SZ" )
+        self.timestamp = self.start_timestamp
+
+    def load(self):
+        self.get_filehandle()
+        self.get_bands()
+        self.get_timestamp()
         self.get_swath_area_def('lon_h', 'lat_h')
 
 class MitiffScene(GenericScene):
@@ -183,6 +202,12 @@ def load_netcdf(file_path, **kwargs):
     netcdf_scene = NetcdfScene(file_path, **kwargs)
     netcdf_scene.load()
     return netcdf_scene
+
+def load_osisaf_amsr2_netcdf(file_path, **kwargs):
+    netcdf_scene = OsisafAmsr2NetcdfScene(file_path, **kwargs)
+    netcdf_scene.load()
+    return netcdf_scene
+
 
 def parse_mitiff_timestamp(string_timestamp):
     fmt = "%H:%M %d/%m-%Y"
