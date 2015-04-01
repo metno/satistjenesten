@@ -100,7 +100,7 @@ class GenericScene(object):
                                                                 index_array)
         return resampled_scene
 
-    def save_geotiff(self, filepath, bands=None):
+    def save_geotiff(self, filepath, bands=None, cmap=None):
         """
         Export Scene in GeoTIFF format
         """
@@ -142,12 +142,28 @@ class GenericScene(object):
         srs.ImportFromProj4(self.area_def.proj4_string)
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
+        if cmap == 'istjenesten':
+
+            # Gdal colortable
+            ct=gdal.ColorTable()
+            for i in numpy.arange(0,10):
+                ct.SetColorEntry(int(i),(150,200,255))
+            for i in numpy.arange(10,40):
+                ct.SetColorEntry(int(i),(140,255,160))
+            for i in numpy.arange(40,70):
+                ct.SetColorEntry(int(i),(255,255,0))
+            for i in numpy.arange(70,90):
+                ct.SetColorEntry(int(i),(255,125,7))
+            for i in numpy.arange(90,255):
+                ct.SetColorEntry(int(i),(255,0,0))
+
         for i, band in enumerate(bands):
             # normalize between 0 and 255
             raster_array = band.data.copy()
-            raster_array *= (255.0 / raster_array.max()).astype(numpy.int8)
-            print raster_array.max(), raster_array.min()
-            gtiff_dataset.GetRasterBand(i + 1).WriteArray(raster_array)
+            # raster_array *= (255.0 / raster_array.max()).astype(numpy.int8)
+            gtiff_band = gtiff_dataset.GetRasterBand(i+1)
+            gtiff_band.SetColorTable(ct)
+            gtiff_band.WriteArray(raster_array)
 
         gtiff_dataset = None
 
