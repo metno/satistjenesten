@@ -14,7 +14,7 @@ def step_impl(context, input_filepath):
 
 @then(u'export a geotiff file {output_filepath}')
 def step_impl(context, output_filepath):
-    context.scene.save_geotiff(output_filepath)
+    context.scene.save_geotiff(output_filepath, cmap='istjenesten')
 
 @given(u'we process netcdf file {input_filepath}')
 def step_impl(context, input_filepath):

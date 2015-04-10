@@ -142,27 +142,27 @@ class GenericScene(object):
         srs.ImportFromProj4(self.area_def.proj4_string)
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
+        gtiff_colortable = None # by default we don't use any colortable 
+
         if cmap == 'istjenesten':
 
             # Gdal colortable
-            ct=gdal.ColorTable()
+            gtiff_colortable=gdal.ColorTable()
             for i in numpy.arange(0,10):
-                ct.SetColorEntry(int(i),(150,200,255))
+                gtiff_colortable.SetColorEntry(int(i),(150,200,255))
             for i in numpy.arange(10,40):
-                ct.SetColorEntry(int(i),(140,255,160))
+                gtiff_colortable.SetColorEntry(int(i),(140,255,160))
             for i in numpy.arange(40,70):
-                ct.SetColorEntry(int(i),(255,255,0))
+                gtiff_colortable.SetColorEntry(int(i),(255,255,0))
             for i in numpy.arange(70,90):
-                ct.SetColorEntry(int(i),(255,125,7))
+                gtiff_colortable.SetColorEntry(int(i),(255,125,7))
             for i in numpy.arange(90,255):
-                ct.SetColorEntry(int(i),(255,0,0))
+                gtiff_colortable.SetColorEntry(int(i),(255,0,0))
 
         for i, band in enumerate(bands):
-            # normalize between 0 and 255
             raster_array = band.data.copy()
-            # raster_array *= (255.0 / raster_array.max()).astype(numpy.int8)
             gtiff_band = gtiff_dataset.GetRasterBand(i+1)
-            gtiff_band.SetColorTable(ct)
+            gtiff_band.SetColorTable(gtiff_colortable)
             gtiff_band.WriteArray(raster_array)
 
         gtiff_dataset = None
