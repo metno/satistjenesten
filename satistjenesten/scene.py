@@ -143,7 +143,6 @@ class GenericScene(object):
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
         gtiff_colortable = None # by default we don't use any colortable 
-
         if cmap == 'istjenesten':
 
             # Gdal colortable
@@ -162,7 +161,7 @@ class GenericScene(object):
         for i, band in enumerate(bands):
             raster_array = band.data.copy()
             gtiff_band = gtiff_dataset.GetRasterBand(i+1)
-            gtiff_band.SetColorTable(gtiff_colortable)
+            if bands_number == 1: gtiff_band.SetColorTable(gtiff_colortable)
             gtiff_band.WriteArray(raster_array)
 
         gtiff_dataset = None
