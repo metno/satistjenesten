@@ -31,8 +31,7 @@ def main():
     mosaic.add_scenes(scene_list)
     mosaic.compose_mosaic()
 
-    output_filename = "{}_mosaic_{}-{}.tiff".format(args.satellite_name,
-            mosaic.start_timestamp_string,
+    output_filename = "{}_12hr-mosaic_{}.tiff".format(args.satellite_name,
             mosaic.end_timestamp_string)
 
     output_filepath = os.path.join(args.output_dir[0], output_filename)
