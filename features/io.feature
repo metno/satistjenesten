@@ -17,4 +17,4 @@ Feature: As a user of the software
 
         Examples:
             | input_filepath | area_name | output_file |
-            | test_data/amsr2n90.nc | istjenesten_frode | amsr2.tif |
+            | test_data/amsr2.nc | istjenesten_frode | amsr2.tif |
