@@ -4,6 +4,7 @@ from pyresample import kd_tree, geometry
 from osgeo import gdal, osr
 from PIL import Image
 import numpy
+import pyresample as pr
 
 class SatBand(object):
     def __init__(self):
@@ -85,19 +86,30 @@ class GenericScene(object):
         except:
             self.get_area_def()
 
-        valid_input_index, valid_output_index, index_array, distance_array = \
-                kd_tree.get_neighbour_info(self.area_def, resampled_scene.area_def,
-                                            resampled_scene.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
+        # valid_input_index, valid_output_index, index_array, distance_array = \
+        #         kd_tree.get_neighbour_info(self.area_def, resampled_scene.area_def,
+        #                                    resampled_scene.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
 
         bands_number = len(resampled_scene.bands)
+
         for i, band in enumerate(resampled_scene.bands.values()):
             print "Resampling band {0:d}/{1:d}".format(i+1, bands_number)
             swath_data = deepcopy(band.data)
-            band.data = kd_tree.get_sample_from_neighbour_info('nn', resampled_scene.area_def.shape,
-                                                                swath_data,
-                                                                valid_input_index,
-                                                                valid_output_index,
-                                                                index_array)
+
+            # band.data = kd_tree.get_sample_from_neighbour_info('nn', resampled_scene.area_def.shape,
+            #                                                    swath_data,
+            #                                                    valid_input_index,
+            #                                                    valid_output_index,
+            #                                                    index_array)
+
+	    radius_of_influence = resampled_scene.area_def.pixel_size_x*2.5
+            sigma = pr.utils.fwhm2sigma(radius_of_influence * 1.5)
+
+            band.data = kd_tree.resample_gauss(self.area_def, 
+						swath_data, 
+						resampled_scene.area_def, 
+						radius_of_influence=radius_of_influence,
+						sigmas=sigma)
         return resampled_scene
 
     def save_geotiff(self, filepath, bands=None, cmap=None):
