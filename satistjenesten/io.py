@@ -195,7 +195,10 @@ class MitiffScene(GenericScene):
 
 def load_mitiff(file_path, **kwargs):
     mitiff_scene = MitiffScene(filepath=file_path, **kwargs)
-    mitiff_scene.load()
+    try:
+        mitiff_scene.load()
+    except:
+        print "Could not load {}, skipping ...".format(file_path)
     return mitiff_scene
 
 def load_netcdf(file_path, **kwargs):
