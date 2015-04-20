@@ -52,8 +52,8 @@ class GenericScene(object):
                 lats = self.filehandle.variables[lats_name][:]
             except:
                 raise Exception('File does not contain latitude/longitude information')
-        
-        swath_area_def = geometry.SwathDefinition(lons, lats) 
+
+        swath_area_def = geometry.SwathDefinition(lons, lats)
         self._swath_area_def = swath_area_def
         self.area_def = swath_area_def
 
@@ -70,14 +70,17 @@ class GenericScene(object):
             self.get_area_def()
         self.longitudes, self.latitudes = self.area_def.get_lonlats()
 
-    def resample_to_area(self, target_area_def):
+    def resample_to_area(self, target_area_def, resample_method='nn'):
         """
         Resample existing scene to the provided area definition
 
         """
+        if resample_method not in ['nn', 'gaussian']:
+            raise Exception('Resample method {} not known'.format(resample_method)
+
+
         attributes_list_to_pass = ['bands', 'timestamp']
         resampled_scene = GenericScene()
-        # resampled_scene.bands = deepcopy(self.bands)
         resampled_scene.area_def = target_area_def
         copy_attributes(self, resampled_scene, attributes_list_to_pass)
 
@@ -86,30 +89,34 @@ class GenericScene(object):
         except:
             self.get_area_def()
 
-        # valid_input_index, valid_output_index, index_array, distance_array = \
-        #         kd_tree.get_neighbour_info(self.area_def, resampled_scene.area_def,
-        #                                    resampled_scene.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
+        valid_input_index, valid_output_index, index_array, distance_array = \
+                kd_tree.get_neighbour_info(self.area_def, resampled_scene.area_def,
+                                           resampled_scene.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
 
         bands_number = len(resampled_scene.bands)
 
         for i, band in enumerate(resampled_scene.bands.values()):
+
             print "Resampling band {0:d}/{1:d}".format(i+1, bands_number)
             swath_data = deepcopy(band.data)
 
-            # band.data = kd_tree.get_sample_from_neighbour_info('nn', resampled_scene.area_def.shape,
-            #                                                    swath_data,
-            #                                                    valid_input_index,
-            #                                                    valid_output_index,
-            #                                                    index_array)
+            if resample_method == 'nn':
+                band.data = kd_tree.get_sample_from_neighbour_info('nn', resampled_scene.area_def.shape,
+                                                                   swath_data,
+                                                                   valid_input_index,
+                                                                   valid_output_index,
+                                                                   index_array)
 
-	    radius_of_influence = resampled_scene.area_def.pixel_size_x*2.5
-            sigma = pr.utils.fwhm2sigma(radius_of_influence * 1.5)
+            elif resample_method == 'gaussian':
 
-            band.data = kd_tree.resample_gauss(self.area_def, 
-						swath_data, 
-						resampled_scene.area_def, 
-						radius_of_influence=radius_of_influence,
-						sigmas=sigma)
+                radius_of_influence = resampled_scene.area_def.pixel_size_x*2.5
+                sigma = pr.utils.fwhm2sigma(radius_of_influence * 1.5)
+
+                band.data = kd_tree.resample_gauss(self.area_def,
+                                                    swath_data,
+                                                    resampled_scene.area_def,
+                                                    radius_of_influence=radius_of_influence,
+                                                    sigmas=sigma)
         return resampled_scene
 
     def save_geotiff(self, filepath, bands=None, cmap=None):
