@@ -185,15 +185,15 @@ class GenericScene(object):
 
             # Gdal colortable
             gtiff_colortable=gdal.ColorTable()
-            for i in numpy.arange(0,10):
+            for i in numpy.arange(0,15):
                 gtiff_colortable.SetColorEntry(int(i),(150,200,255))
-            for i in numpy.arange(10,40):
+            for i in numpy.arange(15,40):
                 gtiff_colortable.SetColorEntry(int(i),(140,255,160))
             for i in numpy.arange(40,70):
                 gtiff_colortable.SetColorEntry(int(i),(255,255,0))
-            for i in numpy.arange(70,90):
+            for i in numpy.arange(70,80):
                 gtiff_colortable.SetColorEntry(int(i),(255,125,7))
-            for i in numpy.arange(90,255):
+            for i in numpy.arange(80,255):
                 gtiff_colortable.SetColorEntry(int(i),(255,0,0))
 
         for i, band in enumerate(bands):
