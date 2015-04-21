@@ -7,39 +7,32 @@ class MosaicScene(GenericScene):
     Several scenes are combined into one
     """
 
-
-    def add_scenes(self, scenes_list):
+    def compose_mosaic(self, scenes_list, resample_method='nn'):
 
         self.scenes = sort_scenes_by_timestamp(scenes_list)
-
         background_scene = self.scenes[0]
-
-        if self.area_def is None:
-            self.area_def = background_scene.area_def
-        if self.timestamp is None:
-            self.start_timestamp = background_scene.timestamp
-            self.timestamp = self.start_timestamp
-        if self.area_def is not background_scene.area_def:
-            self.bands = background_scene.resample_to_area(self.area_def).bands
-        else:
-            self.bands = background_scene.bands
-
-    def compose_mosaic(self):
-        if self.scenes is None:
-            raise Warning("Can't compose mosaic before any scenes have been added")
 
         # Start with second scene in the list, as the first one
         # has been added already as a background scene
-        scene_list = self.scenes[1:]
+        scene_list = self.scenes
+
         for scene in scene_list:
             if scene.area_def != self.area_def:
-                scene = scene.resample_to_area(self.area_def)
-            self.add_bands_to_mosaic_bands(scene)
+                resampled_scene = scene.resample_to_area(self.area_def,
+                                               resample_method=resample_method)
+
+            self.overlay_mosaic_bands(resampled_scene)
+
+        self.start_timestamp = self.scenes[0].timestamp
         self.end_timestamp = self.scenes[-1].timestamp
         self.end_timestamp_string = self.end_timestamp.strftime('%Y%m%d%H%M')
         self.start_timestamp_string = self.start_timestamp.strftime('%Y%m%d%H%M')
 
-    def add_bands_to_mosaic_bands(self, scene):
+    def overlay_mosaic_bands(self, scene):
+
+        if self.bands is None:
+            self.bands = scene.bands
+
         for band_name in self.bands.keys():
             mosaic_band = self.bands[band_name].data.copy()
             scene_band = scene.bands[band_name].data.copy()

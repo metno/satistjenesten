@@ -28,8 +28,7 @@ def main():
 
     mosaic = MosaicScene()
     mosaic.get_area_def(args.area_name[0])
-    mosaic.add_scenes(scene_list)
-    mosaic.compose_mosaic()
+    mosaic.compose_mosaic(scene_list, resample_method='gaussian')
 
     output_filename = "{}_12hr-mosaic_{}.tiff".format(args.satellite_name,
             mosaic.end_timestamp_string)

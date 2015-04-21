@@ -23,4 +23,4 @@ def step_impl(context, input_filepath):
 @then(u'resample to {area_name}')
 def step_impl(context, area_name):
     area = pyresample.utils.load_area('areas.cfg', 'istjenesten_main_4k')
-    context.scene = context.scene.resample_to_area(area)
+    context.scene = context.scene.resample_to_area(area, resample_method='nn')

@@ -28,8 +28,7 @@ def main():
 
     mosaic = MosaicScene()
     mosaic.get_area_def(args.area_name[0])
-    mosaic.add_scenes(scene_list)
-    mosaic.compose_mosaic()
+    mosaic.compose_mosaic(scene_list, resample_method='nn')
 
     # Add '1' to channel id's for readability
     channels_string = "ch"+'-'.join(map(str, numpy.array(args.channels)+1))

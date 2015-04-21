@@ -76,8 +76,7 @@ class GenericScene(object):
 
         """
         if resample_method not in ['nn', 'gaussian']:
-            raise Exception('Resample method {} not known'.format(resample_method)
-
+            raise Exception('Resample method {} not known'.format(resample_method))
 
         attributes_list_to_pass = ['bands', 'timestamp']
         resampled_scene = GenericScene()
@@ -89,9 +88,14 @@ class GenericScene(object):
         except:
             self.get_area_def()
 
+        if resample_method is 'nn':
+            neighbours = 1
+        else:
+            neighbours = 8
+
         valid_input_index, valid_output_index, index_array, distance_array = \
                 kd_tree.get_neighbour_info(self.area_def, resampled_scene.area_def,
-                                           resampled_scene.area_def.pixel_size_x*2.5, neighbours = 1, nprocs=1)
+                                           resampled_scene.area_def.pixel_size_x*2.5, neighbours = neighbours, nprocs=1)
 
         bands_number = len(resampled_scene.bands)
 
@@ -109,14 +113,29 @@ class GenericScene(object):
 
             elif resample_method == 'gaussian':
 
-                radius_of_influence = resampled_scene.area_def.pixel_size_x*2.5
+                radius_of_influence = resampled_scene.area_def.pixel_size_x * 2.5
                 sigma = pr.utils.fwhm2sigma(radius_of_influence * 1.5)
+                gauss = lambda r: numpy.exp(-r ** 2 / float(sigma) ** 2)
 
-                band.data = kd_tree.resample_gauss(self.area_def,
-                                                    swath_data,
-                                                    resampled_scene.area_def,
-                                                    radius_of_influence=radius_of_influence,
-                                                    sigmas=sigma)
+                band.data = kd_tree.get_sample_from_neighbour_info('custom', resampled_scene.area_def.shape,
+                                                                    swath_data,
+                                                                    valid_input_index,
+                                                                    valid_output_index,
+                                                                    index_array,
+                                                                    distance_array=distance_array,
+                                                                    weight_funcs=gauss,
+                                                                    fill_value=0,
+                                                                    with_uncert=False)
+
+
+                # band.data = kd_tree.resample_gauss(self.area_def,
+                #                                     swath_data,
+                #                                     resampled_scene.area_def,
+                #                                     radius_of_influence=radius_of_influence,
+                #                                     sigmas=sigma)
+
+            else:
+                raise Exception('Resampling method not known')
         return resampled_scene
 
     def save_geotiff(self, filepath, bands=None, cmap=None):
