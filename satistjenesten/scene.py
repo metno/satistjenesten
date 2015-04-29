@@ -243,9 +243,9 @@ def copy_attributes(object_from, object_to, attributes_list):
 def istjenesten_colormap():
     """
     """
-    r = color((150, 140, 255, 255, 255, 255), (0, 15, 40, 70, 80, 255))
-    g = color((200, 255, 255, 125, 0, 0), (0, 15, 40, 70, 80, 255))
-    b = color((255, 160, 0, 7, 0, 0), (0, 15, 40, 70, 80, 255))
+    r = color((150, 140, 255, 255, 255, 255, 255), (0, 10, 30, 60,85, 99, 255))
+    g = color((200, 255, 255, 125, 73, 0, 0), (0, 10, 30, 60,85, 99, 255))
+    b = color((255, 160, 0, 7, 4, 0, 0), (0, 10, 30, 60, 85, 99, 255))
     return numpy.concatenate((r.reshape(255,1), g.reshape(255,1), b.reshape(255,1)), axis = 1)
 
 
