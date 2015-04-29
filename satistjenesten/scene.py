@@ -185,16 +185,27 @@ class GenericScene(object):
 
             # Gdal colortable
             gtiff_colortable=gdal.ColorTable()
-            for i in numpy.arange(0,15):
-                gtiff_colortable.SetColorEntry(int(i),(150,200,255))
-            for i in numpy.arange(15,40):
-                gtiff_colortable.SetColorEntry(int(i),(140,255,160))
-            for i in numpy.arange(40,70):
-                gtiff_colortable.SetColorEntry(int(i),(255,255,0))
-            for i in numpy.arange(70,80):
-                gtiff_colortable.SetColorEntry(int(i),(255,125,7))
-            for i in numpy.arange(80,255):
-                gtiff_colortable.SetColorEntry(int(i),(255,0,0))
+
+            colors = { 'blue': (150, 200, 255), 
+                    'green': (140, 255, 160),
+                    'yellow': (255, 255, 0),
+                    'orange':    (255, 127, 7),
+                    'red':   (255, 0, 0) }
+
+            cmap = istjenesten_colormap()
+            for i in numpy.arange(0,255):
+                gtiff_colortable.SetColorEntry(int(i), tuple(cmap[i].astype(numpy.int)))
+
+            #for i in numpy.arange(0,15):
+            #    gtiff_colortable.SetColorEntry(int(i),(150,200,255))
+            #for i in numpy.arange(15,40):
+            #    gtiff_colortable.SetColorEntry(int(i),(140,255,160))
+            #for i in numpy.arange(40,70):
+            #    gtiff_colortable.SetColorEntry(int(i),(255,255,0))
+            #for i in numpy.arange(70,80):
+            #    gtiff_colortable.SetColorEntry(int(i),(255,125,7))
+            #for i in numpy.arange(80,255):
+            #    gtiff_colortable.SetColorEntry(int(i),(255,0,0))
 
         for i, band in enumerate(bands):
             raster_array = band.data.copy()
@@ -228,3 +239,19 @@ def copy_attributes(object_from, object_to, attributes_list):
         if hasattr(object_from, attribute_name):
             the_attribute = getattr(object_from, attribute_name)
             setattr(object_to, attribute_name, deepcopy(the_attribute))
+
+def istjenesten_colormap():
+    """
+    """
+    r = color((150, 140, 255, 255, 255, 255), (0, 15, 40, 70, 80, 255))
+    g = color((200, 255, 255, 125, 0, 0), (0, 15, 40, 70, 80, 255))
+    b = color((255, 160, 0, 7, 0, 0), (0, 15, 40, 70, 80, 255))
+    return numpy.concatenate((r.reshape(255,1), g.reshape(255,1), b.reshape(255,1)), axis = 1)
+
+
+def color(tie_points, intervals):
+    ar = numpy.array([])
+    for i in range(len(intervals)-1):
+        tmp_ar = numpy.floor(numpy.linspace(tie_points[i], tie_points[i+1], intervals[i+1] - intervals[i], endpoint=False)).astype(numpy.int)
+        ar = numpy.append(ar, tmp_ar)
+    return ar
