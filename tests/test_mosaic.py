@@ -11,13 +11,7 @@ class TestMosaicScene(unittest.TestCase):
         self.mosaic = MosaicScene()
         self.mosaic.get_area_def(area_name='nsidc_stere_north_300k')
 
-    def test_MosaicScene_AddsScenes(self):
-        self.mosaic.add_scenes([self.scene_1])
-        self.assertEquals(self.mosaic.start_timestamp, self.scene_1.timestamp)
-        self.assertNotEquals(self.mosaic.area_def, self.scene_1.area_def)
-
     def test_MosaicScene_ComposeMosaic(self):
-        self.mosaic.add_scenes([self.scene_1, self.scene_2])
-        self.mosaic.compose_mosaic()
+        self.mosaic.compose_mosaic([self.scene_1, self.scene_2], resample_method='nn')
         self.mosaic.save_geotiff('out.tif', bands=self.bands_list)
         self.assertTrue(os.path.exists('out.tif'))
