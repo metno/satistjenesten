@@ -4,6 +4,7 @@ import re
 import datetime
 from copy import copy, deepcopy
 from osgeo import gdal, osr
+import rasterio
 
 from pyresample import geometry
 from pyresample import kd_tree
@@ -11,6 +12,34 @@ from PIL import Image
 import netCDF4 as nc
 from satistjenesten import utils
 from satistjenesten.scene import GenericScene, SatBand
+
+class GeotiffScene(GenericScene):
+    def get_filehandle(self):
+        self.filehandle = rasterio.open(self.file_path, 'r')
+
+    def get_bands(self):
+        bands_dict = collections.OrderedDict()
+        bands_number = self.filehandle.count
+
+        try:
+            bands_list = int(self.kwargs['bands'])
+        except:
+            bands_list = range(1, bands_number + 1)
+
+        for band in bands_list:
+            sat_band = SatBand()
+            band_id = band
+            sat_band.data = self.filehandle.read_band(band_id)
+            bands_dict[band_id] = sat_band
+        self.bands = bands_dict
+
+    def get_area_def(self):
+        pass
+
+    def load(self):
+        self.get_filehandle()
+        self.get_bands()
+        self.get_area_def()
 
 class NetcdfScene(GenericScene):
     def get_filehandle(self):
@@ -210,6 +239,11 @@ def load_osisaf_amsr2_netcdf(file_path, **kwargs):
     netcdf_scene = OsisafAmsr2NetcdfScene(file_path, **kwargs)
     netcdf_scene.load()
     return netcdf_scene
+
+def load_geotiff(file_path, **kwargs):
+    geotiff_scene = GeotiffScene(file_path, **kwargs)
+    geotiff_scene.load()
+    return geotiff_scene
 
 
 def parse_mitiff_timestamp(string_timestamp):

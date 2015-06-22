@@ -5,7 +5,8 @@ requirements = ['numpy',
                 'netCDF4 == 1.1.1',
                 'pyresample',
                 'pyyaml',
-                'pillow']
+                'pillow',
+                'rasterio']
 
 readme_contents = ""
 

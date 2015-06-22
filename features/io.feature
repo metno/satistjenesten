@@ -18,3 +18,11 @@ Feature: As a user of the software
         Examples:
             | input_filepath | area_name | output_file |
             | test_data/amsr2.nc | istjenesten_frode | amsr2.tif |
+
+    @wip
+    Scenario Outline: Read GeoTIFF files
+        Given we process GeoTIFF file <input_filepath>
+
+        Examples:
+            | input_filepath | area_name | output_file |
+            | test_data/modis.tif |  nsidc_stere_north_300k | modis-output.tif |
