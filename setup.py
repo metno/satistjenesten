@@ -7,7 +7,7 @@ requirements = ['numpy',
                 'pyyaml',
                 'pillow']
 
-readme_contents = open('README.md', 'r').read()
+readme_contents = ""
 
 setup(
       name='Satistjenesten',
