@@ -177,7 +177,7 @@ class GenericScene(object):
 
         gtiff_dataset.SetGeoTransform(geometry_list)
         srs = osr.SpatialReference()
-        srs.ImportFromProj4(self.area_def.proj4_string)
+        srs.ImportFromProj4(self.area_def.proj4_string.encode('ascii'))
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
         gtiff_colortable = None # by default we don't use any colortable 

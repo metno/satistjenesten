@@ -102,11 +102,18 @@ def parse_proj_string(proj_string):
 def geotiff_meta_to_areadef(meta):
     """
     Transform (Rasterio) geotiff meta dictionary to pyresample area definition 
+
+    Arguments:
+     meta (dictionary) : dictionary containing projection and image geometry
+                         information (formed by Rasterio)
+    Returns:
+         area_def (pyresample.geometry.AreaDefinition) : Area definition object
     """
     area_id = ""
     name = ""
     proj_id = "Generated from GeoTIFF"
     proj_dict = meta['crs']
+    proj_dict_with_string_values = dict(zip(proj_dict.keys(), [str(value) for value in proj_dict.values()]))
     x_size = meta['width']
     y_size = meta['height']
     x_ll = meta['transform'][0]
@@ -118,7 +125,7 @@ def geotiff_meta_to_areadef(meta):
     area_def = pyresample.geometry.AreaDefinition(area_id,
                                                     name,
                                                     proj_id,
-                                                    proj_dict,
+                                                    proj_dict_with_string_values,
                                                     x_size,
                                                     y_size,
                                                     area_extent)

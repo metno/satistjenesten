@@ -22,6 +22,8 @@ Feature: As a user of the software
     @wip
     Scenario Outline: Read GeoTIFF files
         Given we process GeoTIFF file <input_filepath>
+        Then export a geotiff file <output_file>
+        
 
         Examples:
             | input_filepath | area_name | output_file |
