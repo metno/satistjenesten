@@ -13,6 +13,7 @@ import netCDF4 as nc
 from satistjenesten import utils
 from satistjenesten.scene import GenericScene, SatBand
 
+
 class GeotiffScene(GenericScene):
     def get_filehandle(self):
         self.filehandle = rasterio.open(self.file_path, 'r')
@@ -29,17 +30,18 @@ class GeotiffScene(GenericScene):
         for band in bands_list:
             sat_band = SatBand()
             band_id = band
-            sat_band.data = self.filehandle.read_band(band_id)
+            sat_band.data = self.filehandle.read(band_id)
             bands_dict[band_id] = sat_band
         self.bands = bands_dict
 
     def get_area_def(self):
-        pass
+        self.area_def = utils.geotiff_meta_to_areadef(self.filehandle.meta)
 
     def load(self):
         self.get_filehandle()
         self.get_bands()
         self.get_area_def()
+
 
 class NetcdfScene(GenericScene):
     def get_filehandle(self):
@@ -60,6 +62,7 @@ class NetcdfScene(GenericScene):
         self.get_bands()
         self.get_swath_area_def('lon_h', 'lat_h')
 
+        
 class OsisafAmsr2NetcdfScene(NetcdfScene):
     def get_timestamp(self):
         """
@@ -79,6 +82,7 @@ class OsisafAmsr2NetcdfScene(NetcdfScene):
         self.get_bands()
         self.get_timestamp()
         self.get_swath_area_def('lon_h', 'lat_h')
+
 
 class MitiffScene(GenericScene):
     def get_filehandle(self):
@@ -222,6 +226,7 @@ class MitiffScene(GenericScene):
         self.get_area_def()
         self.get_timestamp()
 
+
 def load_mitiff(file_path, **kwargs):
     mitiff_scene = MitiffScene(filepath=file_path, **kwargs)
     try:
@@ -230,15 +235,18 @@ def load_mitiff(file_path, **kwargs):
         print "Could not load {}, skipping ...".format(file_path)
     return mitiff_scene
 
+
 def load_netcdf(file_path, **kwargs):
     netcdf_scene = NetcdfScene(file_path, **kwargs)
     netcdf_scene.load()
     return netcdf_scene
 
+
 def load_osisaf_amsr2_netcdf(file_path, **kwargs):
     netcdf_scene = OsisafAmsr2NetcdfScene(file_path, **kwargs)
     netcdf_scene.load()
     return netcdf_scene
+
 
 def load_geotiff(file_path, **kwargs):
     geotiff_scene = GeotiffScene(file_path, **kwargs)
@@ -255,5 +263,3 @@ def parse_mitiff_timestamp(string_timestamp):
 def get_area_def_from_file(area_name):
     area_filepath = get_area_filepath()
     return utils.load_area(area_filepath, area_name)
-
-

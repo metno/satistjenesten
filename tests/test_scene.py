@@ -24,4 +24,3 @@ class TestScene(unittest.TestCase):
     def test_Scene_ResampleToArea_InvalidResampleMethod_RaisesException(self):
         with self.assertRaises(Exception):
             self.scene.resample_to_area(self.area_def, resample_method='foo')
-

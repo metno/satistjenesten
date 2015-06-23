@@ -98,3 +98,28 @@ def parse_proj_string(proj_string):
     for proj_element in regex_results:
         proj_dict[proj_element[1]] = proj_element[2]
     return proj_dict
+
+def geotiff_meta_to_areadef(meta):
+    """
+    Transform (Rasterio) geotiff meta dictionary to pyresample area definition 
+    """
+    area_id = ""
+    name = ""
+    proj_id = "Generated from GeoTIFF"
+    proj_dict = meta['crs']
+    x_size = meta['width']
+    y_size = meta['height']
+    x_ll = meta['transform'][0]
+    y_ur = meta['transform'][3]
+    y_ll = y_ur - y_size
+    x_ur = x_ll + x_size
+    area_extent = [x_ll, y_ll, x_ur, y_ur]
+
+    area_def = pyresample.geometry.AreaDefinition(area_id,
+                                                    name,
+                                                    proj_id,
+                                                    proj_dict,
+                                                    x_size,
+                                                    y_size,
+                                                    area_extent)
+    return area_def
