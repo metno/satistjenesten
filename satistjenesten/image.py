@@ -1,12 +1,11 @@
-from satistjenesten import GenericScene
+from pycoast import ContourWriter
+from PIL import ImageFont
 
-class ImageScene(GenericScene):
-    def __init__(self):
-        self.bands = None
-
-    def create_rgb(self, red_band, green_band, blue_band):
-        red = red_band.data
-        gree = green_band.data
-        blue = blue_band.data
-        self.bands['rgb'] = numpy.dstack((red, green, blue))
-
+def add_graticules_to_img(scene):
+	font = ImageFont.truetype("/usr/share/fonts/truetype/ttf-dejavu/DejaVuSerif.ttf",16)
+	cw = ContourWriter('/disk1/workspace/gshhs')
+	area_def = (scene.area_def.proj_dict, scene.area_def.area_extent )
+	cw.add_coastlines(scene.img, area_def, resolution = 'h', outline='yellow')
+	cw.add_grid(scene.img, area_def, (1, 1), (0.5, 0.5), font,
+            outline='blue', write_text = True, minor_outline=(255, 0, 0))
+	scene.img.save('/tmp/modis-barent.png')

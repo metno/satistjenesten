@@ -6,7 +6,8 @@ requirements = ['numpy',
                 'pyresample',
                 'pyyaml',
                 'pillow',
-                'rasterio']
+                'rasterio',
+                'pycoast']
 
 readme_contents = ""
 

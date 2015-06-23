@@ -23,8 +23,8 @@ Feature: As a user of the software
     Scenario Outline: Read GeoTIFF files
         Given we process GeoTIFF file <input_filepath>
         Then export a geotiff file <output_file>
-        
+        Then export an image <image_file> with graphics
 
         Examples:
-            | input_filepath | area_name | output_file |
-            | test_data/modis.tif |  nsidc_stere_north_300k | modis-output.tif |
+            | input_filepath | area_name | output_file | image_file |
+            | test_data/modis.tif |  nsidc_stere_north_300k | modis-output.tif | coastlines.png |

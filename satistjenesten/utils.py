@@ -118,8 +118,8 @@ def geotiff_meta_to_areadef(meta):
     y_size = meta['height']
     x_ll = meta['transform'][0]
     y_ur = meta['transform'][3]
-    y_ll = y_ur - y_size
-    x_ur = x_ll + x_size
+    y_ll = y_ur - y_size * 200
+    x_ur = x_ll + x_size * 200
     area_extent = [x_ll, y_ll, x_ur, y_ur]
 
     area_def = pyresample.geometry.AreaDefinition(area_id,

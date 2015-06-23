@@ -4,6 +4,7 @@ import numpy
 import pyresample
 
 from satistjenesten import io
+from satistjenesten import image
 
 
 # Steps for the IO implementation
@@ -32,16 +33,8 @@ def step_impl(context, area_name):
     area = pyresample.utils.load_area('areas.cfg', 'istjenesten_main_4k')
     context.scene = context.scene.resample_to_area(area, resample_method='nn')
 
-
-# Steps for the coastline feature
-@given(u'there is a satellite image data file')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Given there is a satellite image data file')
-
-@then(u'overlay the data with coastlines')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then overlay the data with coastlines')
-
-@then(u'export a PNG')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then export a PNG')
+@then(u'export an image {image_filepath} with graphics')
+def step_impl(context, image_filepath):
+	context.scene.save_rgb_image('modis_output_graphics.png', [1, 2, 3])
+	image.add_graticules_to_img(context.scene)
+    # raise NotImplementedError(u'STEP: Then export an image %s with graphics' % image_filepath)

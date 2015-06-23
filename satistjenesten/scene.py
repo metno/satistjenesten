@@ -216,22 +216,35 @@ class GenericScene(object):
         gtiff_dataset = None
 
 
-    def save_rgb_image(self, output_filename,
-            rgb_list):
+    def compose_rgb_image(self, rgb_list):
         """
-        Save regular TIFF
+        Save regular image with graphics
         """
+        
+        if rgb_list is not list:
+            rgb_list = list(rgb_list)
+
+        if len(rgb_list) is 1:
+            rgb_list = [rgb_list[0],
+                        rgb_list[0],
+                        rgb_list[0]]
+
+
         red_band_name, green_band_name, blue_band_name = rgb_list
-        red_band_array = self.bands[red_band_name].data
+
+        red_band_array   = self.bands[red_band_name].data
         green_band_array = self.bands[green_band_name].data
-        blue_band_array = self.bands[blue_band_name].data
+        blue_band_array  = self.bands[blue_band_name].data
 
         rgb_array = numpy.dstack((red_band_array,
                                  green_band_array,
                                  blue_band_array)).astype(numpy.uint8)
 
-        img = Image.fromarray(rgb_array)
-        img.save(output_filename)
+        self.img = Image.fromarray(rgb_array)
+
+    def save_rgb_image(self, output_filename, rgb_list):
+        self.compose_rgb_image(rgb_list)
+        self.img.save(output_filename)
 
 
 def copy_attributes(object_from, object_to, attributes_list):
