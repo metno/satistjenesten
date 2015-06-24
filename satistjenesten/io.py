@@ -62,7 +62,7 @@ class NetcdfScene(GenericScene):
         self.get_bands()
         self.get_swath_area_def('lon_h', 'lat_h')
 
-        
+
 class OsisafAmsr2NetcdfScene(NetcdfScene):
     def get_timestamp(self):
         """

@@ -127,13 +127,6 @@ class GenericScene(object):
                                                                     fill_value=0,
                                                                     with_uncert=False)
 
-
-                # band.data = kd_tree.resample_gauss(self.area_def,
-                #                                     swath_data,
-                #                                     resampled_scene.area_def,
-                #                                     radius_of_influence=radius_of_influence,
-                #                                     sigmas=sigma)
-
             else:
                 raise Exception('Resampling method not known')
         return resampled_scene
@@ -181,31 +174,21 @@ class GenericScene(object):
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
         gtiff_colortable = None # by default we don't use any colortable 
+
         if cmap == 'istjenesten':
 
             # Gdal colortable
             gtiff_colortable=gdal.ColorTable()
 
             colors = { 'blue': (150, 200, 255), 
-                    'green': (140, 255, 160),
-                    'yellow': (255, 255, 0),
-                    'orange':    (255, 127, 7),
-                    'red':   (255, 0, 0) }
+                    'green':   (140, 255, 160),
+                    'yellow':  (255, 255, 0),
+                    'orange':  (255, 127, 7),
+                    'red':     (255, 0, 0) }
 
             cmap = istjenesten_colormap()
             for i in numpy.arange(0,255):
                 gtiff_colortable.SetColorEntry(int(i), tuple(cmap[i].astype(numpy.int)))
-
-            #for i in numpy.arange(0,15):
-            #    gtiff_colortable.SetColorEntry(int(i),(150,200,255))
-            #for i in numpy.arange(15,40):
-            #    gtiff_colortable.SetColorEntry(int(i),(140,255,160))
-            #for i in numpy.arange(40,70):
-            #    gtiff_colortable.SetColorEntry(int(i),(255,255,0))
-            #for i in numpy.arange(70,80):
-            #    gtiff_colortable.SetColorEntry(int(i),(255,125,7))
-            #for i in numpy.arange(80,255):
-            #    gtiff_colortable.SetColorEntry(int(i),(255,0,0))
 
         for i, band in enumerate(bands):
             raster_array = band.data.copy()
@@ -220,7 +203,7 @@ class GenericScene(object):
         """
         Save regular image with graphics
         """
-        
+
         if rgb_list is not list:
             rgb_list = list(rgb_list)
 
@@ -241,6 +224,7 @@ class GenericScene(object):
                                  blue_band_array)).astype(numpy.uint8)
 
         self.img = Image.fromarray(rgb_array)
+
 
     def save_rgb_image(self, output_filename, rgb_list):
         self.compose_rgb_image(rgb_list)
