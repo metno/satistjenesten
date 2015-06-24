@@ -10,3 +10,4 @@ System dependencies
 ===================
 
 libtiff4-dev
+Libfreetype6-dev 
