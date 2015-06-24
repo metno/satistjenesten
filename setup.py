@@ -2,7 +2,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 requirements = ['numpy',
-                'netCDF4 == 1.1.1',
+				'netCDF4',
                 'pyresample',
                 'pyyaml',
                 'pillow',
