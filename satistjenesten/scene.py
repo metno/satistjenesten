@@ -70,7 +70,7 @@ class GenericScene(object):
             self.get_area_def()
         self.longitudes, self.latitudes = self.area_def.get_lonlats()
 
-    def resample_to_area(self, target_area_def, resample_method='nn'):
+    def resample_to_area(self, target_area_def, resample_method=None):
         """
         Resample existing scene to the provided area definition
 
