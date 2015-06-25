@@ -1,4 +1,6 @@
+sphinxcontrib-napoleon
 pykdtree
 behave
 nose
 pillow
+-e git+https://github.com/mraspaud/pycoast.git#egg=pycoast-0.5.2
