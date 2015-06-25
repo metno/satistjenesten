@@ -115,11 +115,13 @@ def geotiff_meta_to_areadef(meta):
     proj_dict = meta['crs']
     proj_dict_with_string_values = dict(zip(proj_dict.keys(), [str(value) for value in proj_dict.values()]))
     x_size = meta['width']
+    x_res = meta['transform'][1]
+    y_res = meta['transform'][5] * -1
     y_size = meta['height']
     x_ll = meta['transform'][0]
     y_ur = meta['transform'][3]
-    y_ll = y_ur - y_size * 200
-    x_ur = x_ll + x_size * 200
+    y_ll = y_ur - y_size * y_res
+    x_ur = x_ll + x_size * x_res
     area_extent = [x_ll, y_ll, x_ur, y_ur]
 
     area_def = pyresample.geometry.AreaDefinition(area_id,
