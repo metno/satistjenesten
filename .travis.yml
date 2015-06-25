@@ -6,8 +6,7 @@ before_install:
 - sudo apt-get update -q
 - sudo apt-get install libhdf5-serial-dev
 - sudo apt-get install libnetcdf-dev
-- sudo apt-get install libgdal-dev
-- sudo apt-get install python-gdal
+- sudo apt-get install libgdal1-dev
 
 install:
 - pip install .
