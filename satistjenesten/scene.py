@@ -1,4 +1,5 @@
 from satistjenesten.utils import load_area_def
+from satistjenesten.image import add_graticules_to_img
 from copy import deepcopy, copy
 from pyresample import kd_tree, geometry
 from osgeo import gdal, osr
@@ -226,9 +227,11 @@ class GenericScene(object):
         self.img = Image.fromarray(rgb_array)
 
 
-    def save_rgb_image(self, output_filename, rgb_list):
-        self.compose_rgb_image(rgb_list)
+    def save_image(self, output_filename):
         self.img.save(output_filename)
+
+    def add_coastlines_graticules_to_image(self):
+        add_graticules_to_img(self)
 
 
 def copy_attributes(object_from, object_to, attributes_list):

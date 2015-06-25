@@ -1,7 +1,8 @@
 sphinxcontrib-napoleon
-pygdal==1.10.0
+pygdal==1.10.1
 pykdtree
 behave
 nose
 pillow
 -e git+https://github.com/mraspaud/pycoast.git#egg=pycoast-0.5.2
+-e git+https://github.com/jakul/aggdraw.git#egg=aggdraw

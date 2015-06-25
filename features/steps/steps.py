@@ -35,6 +35,6 @@ def step_impl(context, area_name):
 
 @then(u'export an image {image_filepath} with graphics')
 def step_impl(context, image_filepath):
-	context.scene.save_rgb_image('modis_output_graphics.png', [1, 2, 3])
-	image.add_graticules_to_img(context.scene)
-    # raise NotImplementedError(u'STEP: Then export an image %s with graphics' % image_filepath)
+	context.scene.compose_rgb_image([1, 2, 3])
+	context.scene.add_coastlines_graticules_to_image()
+        context.scene.save_image(image_filepath)

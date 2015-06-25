@@ -113,7 +113,7 @@ def geotiff_meta_to_areadef(meta):
     name = ""
     proj_id = "Generated from GeoTIFF"
     proj_dict = meta['crs']
-    proj_dict_with_string_values = dict(zip(proj_dict.keys(), [str(value) for value in proj_dict.values()]))
+    proj_dict_with_string_values = dict(zip([str(key) for key in proj_dict.keys()], [str(value) for value in proj_dict.values()]))
     x_size = meta['width']
     x_res = meta['transform'][1]
     y_res = meta['transform'][5] * -1
