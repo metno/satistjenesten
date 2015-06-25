@@ -173,7 +173,7 @@ class GenericScene(object):
         srs.ImportFromProj4(self.area_def.proj4_string.encode('ascii'))
         gtiff_dataset.SetProjection(srs.ExportToWkt())
 
-        gtiff_colortable = None # by default we don't use any colortable 
+        gtiff_colortable = None # by default we don't use any colortable
 
         if cmap == 'istjenesten':
 
