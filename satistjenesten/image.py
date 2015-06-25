@@ -4,7 +4,6 @@ from PIL import ImageFont
 def add_graticules_to_img(scene):
 	font = ImageFont.truetype("/usr/share/fonts/truetype/ttf-dejavu/DejaVuSerif.ttf",16)
 	cw = ContourWriter('/disk1/workspace/gshhs')
-        scene.area_def.proj4_string = str(scene.area_def.proj4_string)
 
 	area_def = (scene.area_def.proj_dict, scene.area_def.area_extent )
 
