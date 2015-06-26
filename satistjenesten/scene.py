@@ -1,5 +1,7 @@
 from satistjenesten.utils import load_area_def
 from satistjenesten.image import add_graticules_to_img
+from satistjenesten.image import add_caption_to_img
+from satistjenesten.image import save_reduced_jpeg
 from copy import deepcopy, copy
 from pyresample import kd_tree, geometry
 from osgeo import gdal, osr
@@ -232,6 +234,15 @@ class GenericScene(object):
 
     def add_coastlines_graticules_to_image(self):
         add_graticules_to_img(self)
+
+    def add_caption_to_image(self, text):
+        """
+        Draw a white box on top of the image and put a header there
+        """
+        add_caption_to_img(self, text)
+
+    def save_reduced_jpeg(self, output_filename, target_size):
+        save_reduced_jpeg(self, output_filename, target_size)
 
 
 def copy_attributes(object_from, object_to, attributes_list):
