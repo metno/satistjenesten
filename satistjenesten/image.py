@@ -6,7 +6,7 @@ import aggdraw
 font = aggdraw.Font('blue', os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'DroidSans.ttf'), size=56, opacity=200)
 pil_font = ImageFont.truetype(os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'DroidSans.ttf'), 90)
 gshhs_dir =  os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'gshhs')
-gshhs_dir =  '/disk1/workspace/gshhs'
+gshhs_dir =  '/disk1/mikhaili/gshhs'
 
 def add_graticules_to_img(scene):
     cw = ContourWriterAGG(gshhs_dir)
