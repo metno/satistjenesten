@@ -1,5 +1,5 @@
 sphinxcontrib-napoleon
-pygdal==1.10.1
+pygdal==1.10.0 
 pykdtree
 behave
 nose
