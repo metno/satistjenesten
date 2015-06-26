@@ -3,8 +3,9 @@ from pycoast import ContourWriterAGG
 from PIL import ImageFont, ImageDraw, Image, ImageFile
 import aggdraw
 
-font = aggdraw.Font('blue', os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'DroidSans.ttf'), size=56, opacity=200)
-pil_font = ImageFont.truetype(os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'DroidSans.ttf'), 90)
+font_filepath = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+font = aggdraw.Font('blue', font_filepath, size=56, opacity=200)
+pil_font = ImageFont.truetype(font_filepath, 90)
 gshhs_dir =  os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'gshhs')
 gshhs_dir =  '/disk1/mikhaili/gshhs'
 
