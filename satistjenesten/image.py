@@ -36,7 +36,6 @@ def add_caption_to_img(scene, text):
 
     W, H = image.size
     dy = int(H * 0.05)
-    print image.size
 
     # add box on top
     larger_image = Image.new('RGB', (W, H + dy), color='white')

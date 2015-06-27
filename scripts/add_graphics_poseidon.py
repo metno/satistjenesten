@@ -45,7 +45,11 @@ def main():
 
     args = p.parse_args()
 
-    for ifile in args.input_files:
+    list_len = len(args.input_files)
+
+    for i, ifile in enumerate(args.input_files):
+        print "Processing file %i/%i: %s" % (i+1, list_len, os.path.basename(ifile))
+
         scene = io.load_geotiff(ifile)
         scene.compose_rgb_image([1, 2, 3])
         scene.add_coastlines_graticules_to_image()
