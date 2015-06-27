@@ -3,6 +3,7 @@ from satistjenesten import io
 import argparse
 import os
 import numpy
+from datetime import datetime
 
 def make_output_filepath(input_filename, output_dir):
     output_basename = os.path.basename(input_filename)
@@ -14,23 +15,26 @@ def get_timestamp_from_filename(input_filename):
 	Filename example: modis_poseidon_20150627_0755_terra_ch1-4-3.tif
 
 	"""
-	date_str = input_filename.split('_')[2]
-	time_str = input_filename.split('_')[3]
+        base_filename = os.path.basename(input_filename)
+	date_str = base_filename.split('_')[2]
+	time_str = base_filename.split('_')[3]
 	timestamp = datetime.strptime('{}_{}'.format(date_str, time_str), '%Y%m%d_%H%M')
-	
+
 	return timestamp
 
 def get_channels_combination_from_filename(input_filename):
 	"""
 	Filename example: modis_poseidon_20150627_0755_terra_ch1-4-3.tif
 	"""
-	channels = input_filename.split('_')[-1].split['.'][0]
+        base_filename = os.path.basename(input_filename)
+	channels = input_filename.split('_')[-1]
+        channels = channels.split('.')[0]
 	channels_list = channels.strip('ch').split('-')
 	ch1 = channels_list[0]
 	ch2 = channels_list[1]
 	ch3 = channels_list[2]
 
-	channels_string = '{},{},{}'.format(ch1, ch2, ch3)
+	channels_string = '{}, {}, {}'.format(ch1, ch2, ch3)
 	return channels_string
 
 def main():
@@ -48,10 +52,10 @@ def main():
         timestamp = get_timestamp_from_filename(ifile)
         timestamp_str = '{}'.format(timestamp.isoformat())
         channel_str = get_channels_combination_from_filename(ifile)
-        
-        caption_text = u"Barents sea, MODIS, {}, channels: {}".format(timestamp_str, channels_str)
+
+        caption_text = u"Barents sea, MODIS, {}, channels: {}".format(timestamp_str, channel_str)
         scene.add_caption_to_image(caption_text)
-        
+
         output_filepath = make_output_filepath(ifile, args.output_dir[0])
         scene.save_reduced_jpeg(output_filepath, 100)
 
