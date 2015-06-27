@@ -9,6 +9,30 @@ def make_output_filepath(input_filename, output_dir):
     output_filename = os.path.join(output_dir, os.path.splitext(output_basename)[0] + '.jpg')
     return output_filename
 
+def get_timestamp_from_filename(input_filename):
+	"""
+	Filename example: modis_poseidon_20150627_0755_terra_ch1-4-3.tif
+
+	"""
+	date_str = input_filename.split('_')[2]
+	time_str = input_filename.split('_')[3]
+	timestamp = datetime.strptime('{}_{}'.format(date_str, time_str), '%Y%m%d_%H%M')
+	
+	return timestamp
+
+def get_channels_combination_from_filename(input_filename):
+	"""
+	Filename example: modis_poseidon_20150627_0755_terra_ch1-4-3.tif
+	"""
+	channels = input_filename.split('_')[-1].split['.'][0]
+	channels_list = channels.strip('ch').split('-')
+	ch1 = channels_list[0]
+	ch2 = channels_list[1]
+	ch3 = channels_list[2]
+
+	channels_string = '{},{},{}'.format(ch1, ch2, ch3)
+	return channels_string
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("-o", "--output_dir", default='.', nargs=1)
@@ -21,8 +45,13 @@ def main():
         scene = io.load_geotiff(ifile)
         scene.compose_rgb_image([1, 2, 3])
         scene.add_coastlines_graticules_to_image()
-        scene.add_caption_to_image(u'Barents sea')
-
+        timestamp = get_timestamp_from_filename(ifile)
+        timestamp_str = '{}'.format(timestamp.isoformat())
+        channel_str = get_channels_combination_from_filename(ifile)
+        
+        caption_text = u"Barents sea, MODIS, {}, channels: {}".format(timestamp_str, channels_str)
+        scene.add_caption_to_image(caption_text)
+        
         output_filepath = make_output_filepath(ifile, args.output_dir[0])
         scene.save_reduced_jpeg(output_filepath, 100)
 
