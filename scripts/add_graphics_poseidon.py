@@ -27,7 +27,7 @@ def get_channels_combination_from_filename(input_filename):
 	Filename example: modis_poseidon_20150627_0755_terra_ch1-4-3.tif
 	"""
         base_filename = os.path.basename(input_filename)
-	channels = input_filename.split('_')[-1]
+	channels = base_filename.split('_')[-1]
         channels = channels.split('.')[0]
 	channels_list = channels.strip('ch').split('-')
 	ch1 = channels_list[0]
