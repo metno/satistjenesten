@@ -7,7 +7,7 @@ Feature: As a user of the software
 
 		Examples:
 			| input_filepath | yaml_config | area_name | output_file |
-			| test_data/avhrr-msv.mitiff | None | nsidc_stere_north_300k | out.tif |
+			| test_data/avhrr-swath.mitiff | None | nsidc_stere_north_300k | out.tif |
 
     @wip
     Scenario Outline: Read and Write Netcdf Files

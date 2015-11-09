@@ -6,11 +6,13 @@ import datetime
 class TestIoMitiff(unittest.TestCase):
 
     def setUp(self):
-        mitiff_file_path = 'test_data/avhrr-msv.mitiff'
-        mitiff_dict_path = 'test_data/avhrr-mitiff.yml'
-        mitiff = io.MitiffScene(filepath=mitiff_file_path, configpath=mitiff_dict_path)
+        mitiff_file_path = 'test_data/avhrr-swath.mitiff'
+        mitiff = io.MitiffScene(filepath=mitiff_file_path)
         mitiff.load()
         self.mitiff = mitiff
+
+    def tearDown(self):
+        del self.mitiff
 
     def test_load_NumpyArray(self):
         self.mitiff.load()
@@ -48,6 +50,6 @@ class TestIoNetcdf(unittest.TestCase):
         netcdf_scene = io.NetcdfScene(filepath=netcdf_filepath, bands=['lat_h'])
         self.netcdf = netcdf_scene
         self.netcdf.load()
-    
+
     def test_Load_DefinedBands(self):
         self.assertIsNotNone(self.netcdf.bands)

@@ -114,7 +114,7 @@ class MitiffScene(GenericScene):
         self.area_def = area_def_from_tags()
 
     def get_mitiff_tags(self):
-        self.filehandle.seek(0)
+        self.get_filehandle()
         self.tags = self.filehandle.tag.tagdata
         self.parse_mitiff_tags()
 
