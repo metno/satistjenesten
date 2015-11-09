@@ -3,9 +3,9 @@ from pycoast import ContourWriterAGG
 from PIL import ImageFont, ImageDraw, Image, ImageFile
 import aggdraw
 
-font = aggdraw.Font('blue', os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'DroidSans.ttf'), size=56, opacity=200)
-pil_font = ImageFont.truetype(os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'DroidSans.ttf'), 90)
-gshhs_dir =  os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'gshhs')
+font_path = os.path.join('/usr/share/fonts/truetype/droid', 'DroidSans.ttf')
+font = aggdraw.Font('blue', font_path, size=56, opacity=200)
+pil_font = ImageFont.truetype(font_path, 90)
 gshhs_dir =  '/disk1/mikhaili/gshhs'
 
 def add_graticules_to_img(scene):
