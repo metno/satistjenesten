@@ -146,11 +146,20 @@ class MitiffScene(GenericScene):
         datetime_timestamp = parse_mitiff_timestamp(timestamp_string)
         tags_dict['timestamp'] = datetime_timestamp
 
+        lat0_pattern = 'lat_0=(\d+\w)'
+        lat0 = self.parse_tag_string(lat0_pattern)
+
+        lon0_pattern = 'lon_0=(\d+)'
+        lon0 = self.parse_tag_string(lon0_pattern)
+
+        lat_ts_pattern = 'lat_ts=(\d+\w)'
+        lat_ts = self.parse_tag_string(lat_ts_pattern)
+
         proj_string_pattern = 'Proj string:\s(.*)\n'
         tags_dict['proj_dict'] = {'proj': 'stere',
-                                  'lat_0': '90',
-                                  'lat_ts': '60',
-                                  'lon_0': '0',
+                                  'lat_0': lat0,
+                                  'lat_ts': lat_ts,
+                                  'lon_0': lon0,
                                   'ellps': 'WGS84'}
 
         xsize_pattern = 'Xsize:\s+(\d+)'
