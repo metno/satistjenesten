@@ -232,7 +232,7 @@ def load_mitiff(file_path, **kwargs):
     try:
         mitiff_scene.load()
     except:
-        print "Could not load {}, skipping ...".format(file_path)
+        print "Could not load {0}, skipping ...".format(file_path)
     return mitiff_scene
 
 

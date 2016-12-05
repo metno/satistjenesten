@@ -18,7 +18,7 @@ def get_timestamp_from_filename(input_filename):
         base_filename = os.path.basename(input_filename)
 	date_str = base_filename.split('_')[2]
 	time_str = base_filename.split('_')[3]
-	timestamp = datetime.strptime('{}_{}'.format(date_str, time_str), '%Y%m%d_%H%M')
+	timestamp = datetime.strptime('{0}_{1}'.format(date_str, time_str), '%Y%m%d_%H%M')
 
 	return timestamp
 
@@ -34,7 +34,7 @@ def get_channels_combination_from_filename(input_filename):
 	ch2 = channels_list[1]
 	ch3 = channels_list[2]
 
-	channels_string = '{}, {}, {}'.format(ch1, ch2, ch3)
+	channels_string = '{0}, {1}, {2}'.format(ch1, ch2, ch3)
 	return channels_string
 
 def main():
@@ -54,10 +54,10 @@ def main():
         scene.compose_rgb_image([1, 2, 3])
         scene.add_coastlines_graticules_to_image()
         timestamp = get_timestamp_from_filename(ifile)
-        timestamp_str = '{}'.format(timestamp.isoformat())
+        timestamp_str = '{0}'.format(timestamp.isoformat())
         channel_str = get_channels_combination_from_filename(ifile)
 
-        caption_text = u"Barents sea, MODIS, {}, channels: {}".format(timestamp_str, channel_str)
+        caption_text = u"Barents sea, MODIS, {0}, channels: {1}".format(timestamp_str, channel_str)
         scene.add_caption_to_image(caption_text)
 
         output_filepath = make_output_filepath(ifile, args.output_dir[0])
