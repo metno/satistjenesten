@@ -33,7 +33,7 @@ def main():
     # Add '1' to channel id's for readability
     channels_string = "ch"+'-'.join(map(str, numpy.array(args.channels)+1))
 
-    output_filename = "{}_mosaic_{}-{}_{}.tiff".format(args.satellite_name,
+    output_filename = "{0}_mosaic_{1}-{2}_{3}.tiff".format(args.satellite_name,
             mosaic.start_timestamp_string,
             mosaic.end_timestamp_string,
             channels_string)
