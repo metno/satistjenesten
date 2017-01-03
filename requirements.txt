@@ -1,5 +1,6 @@
 sphinxcontrib-napoleon
-pygdal==2.0.2.3 
+pygdal==2.0.2.3
+rasterio
 pykdtree
 behave
 nose
