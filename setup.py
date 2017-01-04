@@ -13,6 +13,7 @@ readme_contents = ""
 
 setup(
       name='satistjenesten',
+      version=0.5,
       author='Mikhail Itkin',
       description='Istjenesten satellite processing suite',
       packages=['satistjenesten'],
@@ -21,4 +22,14 @@ setup(
       install_requires=requirements,
       test_suite='tests',
       scripts=['scripts/amsr2_mosaic.py',  'scripts/mitiff2geotiff.py',  'scripts/mitiff_mosaic.py'],
+      packages=['satistjenesten'],
+      classifiers=[
+      'Development Status :: 5 - Production/Stable',
+      'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+      'Programming Language :: Python',
+      'Operating System :: OS Independent',
+      'Intended Audience :: Science/Research',
+      'Topic :: Scientific/Engineering'
+      ],
+      include_package_data = True,
       )

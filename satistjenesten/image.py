@@ -3,10 +3,10 @@ from pycoast import ContourWriterAGG
 from PIL import ImageFont, ImageDraw, Image, ImageFile
 import aggdraw
 
-font_path = os.path.join('/usr/share/fonts/truetype/droid', 'DroidSans.ttf')
-font = aggdraw.Font('blue', font_path, size=56, opacity=200)
-pil_font = ImageFont.truetype(font_path, 90)
-gshhs_dir =  '/disk1/mikhaili/gshhs'
+font_filepath = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+font = aggdraw.Font('blue', font_filepath, size=56, opacity=200)
+pil_font = ImageFont.truetype(font_filepath, 90)
+gshhs_dir =  os.path.join(os.path.dirname(__file__), os.pardir, 'test_data', 'gshhs')
 
 def add_graticules_to_img(scene):
     cw = ContourWriterAGG(gshhs_dir)
@@ -35,7 +35,6 @@ def add_caption_to_img(scene, text):
 
     W, H = image.size
     dy = int(H * 0.05)
-    print image.size
 
     # add box on top
     larger_image = Image.new('RGB', (W, H + dy), color='white')
