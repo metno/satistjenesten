@@ -22,7 +22,6 @@ setup(
       install_requires=requirements,
       test_suite='tests',
       scripts=['scripts/amsr2_mosaic.py',  'scripts/mitiff2geotiff.py',  'scripts/mitiff_mosaic.py'],
-      packages=['satistjenesten'],
       classifiers=[
       'Development Status :: 5 - Production/Stable',
       'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
