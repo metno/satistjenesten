@@ -20,5 +20,5 @@ setup(
       long_description=readme_contents,
       install_requires=requirements,
       test_suite='tests',
-      scripts=['scripts/amsr2_mosaic.py',  'scripts/mitiff2geotiff.py',  'scripts/mitiff_mosaic.py']
+      scripts=['scripts/amsr2_mosaic.py',  'scripts/mitiff2geotiff.py',  'scripts/mitiff_mosaic.py'],
       )
