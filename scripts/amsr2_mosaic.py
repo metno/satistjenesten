@@ -30,7 +30,7 @@ def main():
     mosaic.get_area_def(args.area_name[0])
     mosaic.compose_mosaic(scene_list, resample_method='gaussian')
 
-    output_filename = "{}_12hr-mosaic_{}.tiff".format(args.satellite_name,
+    output_filename = "{0}_12hr-mosaic_{1}.tiff".format(args.satellite_name,
             mosaic.end_timestamp_string)
 
     output_filepath = os.path.join(args.output_dir[0], output_filename)
