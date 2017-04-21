@@ -79,7 +79,7 @@ class GenericScene(object):
 
         """
         if resample_method not in ['nn', 'gaussian']:
-            raise Exception('Resample method {} not known'.format(resample_method))
+            raise Exception('Resample method {0} not known'.format(resample_method))
 
         attributes_list_to_pass = ['bands', 'timestamp']
         resampled_scene = GenericScene()
