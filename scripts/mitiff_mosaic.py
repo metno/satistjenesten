@@ -22,7 +22,7 @@ def main():
     scene_list = []
 
     for input_file in args.input_files:
-        print "Loading %s" % (input_file)
+        print "Loading {0!s}".format((input_file))
         mitiff = io.load_mitiff(input_file, bands=args.channels)
         scene_list.append(mitiff)
 

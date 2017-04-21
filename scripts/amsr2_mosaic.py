@@ -22,7 +22,7 @@ def main():
     scene_list = []
 
     for input_file in args.input_files:
-        print "Loading %s" % (input_file)
+        print "Loading {0!s}".format((input_file))
         amsr2_scene = io.load_osisaf_amsr2_netcdf(input_file, bands=args.channels)
         scene_list.append(amsr2_scene)
 

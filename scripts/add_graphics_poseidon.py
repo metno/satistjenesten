@@ -48,7 +48,7 @@ def main():
     list_len = len(args.input_files)
 
     for i, ifile in enumerate(args.input_files):
-        print "Processing file %i/%i: %s" % (i+1, list_len, os.path.basename(ifile))
+        print "Processing file {0:d}/{1:d}: {2!s}".format(i+1, list_len, os.path.basename(ifile))
 
         scene = io.load_geotiff(ifile)
         scene.compose_rgb_image([1, 2, 3])
